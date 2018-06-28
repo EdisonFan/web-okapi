@@ -1,11 +1,13 @@
 {
   "name": "a-simple-react-router-v4-tutorial",
-  "description": "https://medium.com/@pshrmn/a-simple-react-router-v4-tutorial-7f23ff27adf",
+  "description":
+    "https://medium.com/@pshrmn/a-simple-react-router-v4-tutorial-7f23ff27adf",
   "version": "0.0.13",
   "dependencies": {
-    "react-router-dom": "latest",
+    "antd": "3.6.4",
+    "react": "15.5.3",
     "react-dom": "15.5.3",
-    "react": "15.5.3"
+    "react-router-dom": "latest"
   },
   "devDependencies": {
     "react-scripts": "1.0.0"
