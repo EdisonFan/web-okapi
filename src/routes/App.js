@@ -4,7 +4,7 @@ import Main from './Main'
 
 const App = () => (
   <div>
-    {/*<Header/>*/}
+    <Header/>
     <Main />
   </div>
 )

@@ -24,15 +24,17 @@ class Header extends React.Component {
         selectedKeys={[this.state.current]}
         mode="horizontal"
       >
-        <Menu.Item key="home" style={{width:200}}>
+        <Menu.Item key="home" >
           <Link to="/">
             <Icon type="bars" /><span className="nav-text">模块列表</span>
           </Link>
         </Menu.Item>
-        <Menu.Item key="app" >
-          <Link to='/roster'> <Icon type="appstore" />Roster</Link>
+        <Menu.Item key="deploy" >
+          <Link to='/deploy'> <Icon type="appstore" />部署列表</Link>
         </Menu.Item>
-       
+        <Menu.Item key="tenants" >
+          <Link to='/tenants'> <Icon type="user" />租客列表</Link>
+        </Menu.Item>
       </Menu>
     );
   }
