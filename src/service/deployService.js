@@ -1,7 +1,27 @@
+import host from '../../src/appConfig';
 const axios = require('axios');
-const host = 'http://localhost:4000';
 
-class ModulesService {
+class DeployService {
+    static async getOne(service_id,instance_id) {
+        try {
+            let _r = await axios.get(host + `/_/discovery/modules/${service_id}/${instance_id}`, {
+                validateStatus: function (status) {
+                    return status >= 200 && status < 500;
+                }
+            });
+            return _r.data;
+        } catch (error) {
+            return error.response.data
+        }
+    }
+
+    static async getHealth() {
+        let _mdata = await axios.get(host + '/_/discovery/health');
+        _mdata.data.forEach((item, index) => {
+            item.key = index
+        });
+        return _mdata.data;
+    }
     static async getList() {
         let _mdata = await axios.get(host + '/_/discovery/modules');
         _mdata.data.forEach((item, index) => {
@@ -11,26 +31,30 @@ class ModulesService {
     }
     static async save(params) {
         try {
-            let r= await axios.post(host + '/_/discovery/modules',params);
+            let r = await axios.post(host + '/_/discovery/modules', params);
             return r.statusText
-            
+
         } catch (error) {
             return error.response.data
         }
     }
     /**
-     * 删除模块
-     * @param {String} moduleId  模块id
+     * delete module
+     * @param {String} moduleId  
      */
-    static async del(moduleId,instId){
+    static async del(moduleId, instId) {
         try {
-            let r= await axios.delete(host+'/_/discovery/modules/'+moduleId+'/'+instId);
-            return r
+            let r = await axios.delete(host + '/_/discovery/modules/' + moduleId + '/' + instId, {
+                validateStatus: function (status) {
+                    return status >= 200 && status < 500;
+                }
+            });
+            return { status: r.status, message: r.data }
         } catch (error) {
             return error
         }
     }
 
-    
+
 }
-export default ModulesService;
+export default DeployService;

@@ -1,5 +1,5 @@
-const axios = require('axios');
-const host = 'http://localhost:9130';
+import axios from 'axios'
+import host from '../appConfig.js'; 
 
 class TenantsService {
     static async getList() {
@@ -24,8 +24,11 @@ class TenantsService {
      */
     static async del(moduleId){
         try {
-            let r= await axios.delete(host+'_/proxy/tenants/'+moduleId,{baseURL:host});
-            return r
+           
+            let r= await axios.delete(host+'/_/proxy/tenants/'+moduleId,{validateStatus:function(status){
+                return status >= 200 && status <600;
+              }});
+            return {status:r.status,message:r.data}
         } catch (error) {
             return error
         }
@@ -38,6 +41,15 @@ class TenantsService {
             
         } catch (error) {
             return error.response.data
+        }
+    }
+    static async unBindModule(tenant_id,module_id){
+        try {
+            let r= await axios.delete(host + '/_/proxy/tenants/'+tenant_id+'/modules/'+module_id);
+            return r.statusText
+            
+        } catch (error) {
+            return error
         }
     }
 }

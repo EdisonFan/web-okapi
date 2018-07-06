@@ -3,6 +3,7 @@ import { Switch, Route } from 'react-router-dom'
 import Modules from '../components/Modules'
 import Deploy from '../components/Deploy'
 import Tenants from '../components/Tenants'
+import Users from '../components/Users'
 
 // The Main component renders one of the three provided
 // Routes (provided that one matches). Both the /roster
@@ -15,6 +16,7 @@ const Main = () => (
       <Route exact path='/' component={Modules}/>
       <Route path='/deploy' component={Deploy}/>
       <Route path='/tenants' component={Tenants}/>
+      <Route path='/Users' component={Users}/>
     </Switch>
   </main>
 )

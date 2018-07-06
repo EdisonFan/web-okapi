@@ -35,6 +35,9 @@ class Header extends React.Component {
         <Menu.Item key="tenants" >
           <Link to='/tenants'> <Icon type="user" />租客列表</Link>
         </Menu.Item>
+        <Menu.Item key="users" >
+          <Link to='/users'> <Icon type="user" />用户列表</Link>
+        </Menu.Item>
       </Menu>
     );
   }

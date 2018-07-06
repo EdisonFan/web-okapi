@@ -2,30 +2,11 @@ const Koa = require('koa')
 const axios = require('axios');
 const cors = require('koa2-cors');
 const bodyParser = require('koa-bodyparser');
-const koaBody = require('koa-body');
 const app = new Koa();
-const okapiHost='localhost'
+const okapiHost='10.10.168.250'
 const okapiPort='9130'
 app.use(bodyParser());
-const addObj=JSON.parse(`{
-    "id": "mod-mymodule-1.0.0",
-    "name": "mymodule",
-    "provides": [
-      {
-        "id": "mymodule",
-        "version": "1.0",
-        "handlers" : [
-          {
-            "methods": [ "GET" ],
-            "pathPattern": "/ebooks/{title}",
-            "permissionsRequired": [ ]
-          }
-        ]
-      }
-      
-    ]
-  }
-  `)
+
 const main=async ( ctx ) => {
 
     switch (ctx.method) {
@@ -48,13 +29,13 @@ const main=async ( ctx ) => {
 }
 app.use(cors({
     origin: function(ctx) {
-      return 'http://localhost:3000'; 
+      return '*'; 
     },
     exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
     maxAge: 5,
     credentials: true,
     allowMethods: ['GET', 'POST', 'DELETE'],
-    allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    allowHeaders: ['Content-Type', 'Authorization', 'Accept','x-okapi-token'],
   }));
 app.use(main).listen(4000)
 console.log('proxy-okapi is starting at port 4000')
@@ -103,7 +84,8 @@ async function GetHandle(ctx) {
             url: `http://${okapiHost}:${okapiPort}${ctx.path}`,
             validateStatus: function (status) {
                 return status >= 200 && status < 500;
-            }
+            },
+            headers:ctx.headers
         });
         ctx.response.status = r.status;
         ctx.response.body = r.data;

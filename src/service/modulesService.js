@@ -1,7 +1,11 @@
-const axios = require('axios');
-const host = 'http://localhost:4000';
+import axios from 'axios'
+import host from '../appConfig.js'; 
 
 class ModulesService {
+    static async getOne(module_id) {
+        let _mdata = await axios.get(host + '/_/proxy/modules/'+module_id);
+        return _mdata.data;
+    }
     static async getList() {
         let _mdata = await axios.get(host + '/_/proxy/modules');
         _mdata.data.forEach((item, index) => {
@@ -50,6 +54,22 @@ class ModulesService {
             
         } catch (error) {
             return error.response.data
+        }
+    }
+    
+    /**
+     * get modules by tenantId
+     * @param {string} tId tenantId  
+     */
+    static async getListByTanId(tId){
+        try {
+            let _mdata= await axios.get(host+'/_/proxy/tenants/'+tId+'/modules');
+            _mdata.data.forEach((item, index) => {
+                item.key = index
+            });
+            return _mdata.data;
+        } catch (error) {
+            return error
         }
     }
 }
