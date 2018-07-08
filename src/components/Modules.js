@@ -2,22 +2,20 @@ import React, { Component } from 'react';
 import { Table, Divider, Button, Modal, message, Input } from 'antd';
 import ModulesService from '../service/modulesService';
 import SimpleContent from './SimpleContent.jsx';
+import defaultValue from '../config/defalutValue';
 const { TextArea } = Input;
-
 class Modules extends Component {
   columns = [
-    { title: '序号', dataIndex: 'index', key: 'index', render: (text, record, index) => index + 1 },
-    { title: '模块名称', dataIndex: 'name', key: 'name', render: (text, record, index) => <a href="javascript:;" onClick={this.showModuleDetails.bind(this, record.id)} >{text}</a> },
-    { title: '模块ID', dataIndex: 'id', key: 'id', },
+    { title: '序号', key: 'index', render: (t, r, i) => i + 1 },
+    { title: '模块名称', dataIndex: 'name', render: (text, record, index) => <a href="javascript:;" onClick={this.showModuleDetails.bind(this, record.id)} >{text}</a> },
+    { title: '模块ID', dataIndex: 'id', },
     {
       title: '操作', key: 'action',
       render: (text, record) => (
         <span>
-          <a href="javascript:;" onClick={() => { this.setState({ AddDeployModalVisible: true, ModuleId: record.id }) }}>部署</a>
+          <a href="javascript:;" onClick={() => { this.setState({ AddDeployModalVisible: true, ModuleId: record.id }); }}>部署</a>
           <Divider type="vertical" />
-          <a href="javascript:;" onClick={() => {
-            this.delModule(record.id)
-          }}>删除</a>
+          <a href="javascript:;" onClick={this.delModule.bind(this,record.id)}>删除</a>
         </span>
       ),
     }];
@@ -28,26 +26,9 @@ class Modules extends Component {
     AddModalVisible: false,
     AddDeployModalVisible: false,
     ViewModalVisible: false,
-    dataDetails: 's',
-    addDefaultValut: `
-    {
-      "id" : "folio-hello-vertx-0.1-SNAPSHOT",
-      "name" : "Hello World",
-      "provides" : [ {
-        "id" : "hello",
-        "version" : "1.1",
-          "handlers" : [ {
-            "methods" : [ "GET", "POST" ],
-            "pathPattern" : "/hello"
-          } ]
-      } ]
-    }
-    `,
-    deployDefaultValte: `{
-      "srvcId": "folio-hello-vertx-0.1-SNAPSHOT",
-      "instId":"localhost-8080",
-      "url":"http://localhost:8080"
-    }`,
+    dataDetails: '',
+    addDefaultValut: defaultValue.modules.add,
+    deployDefaultValte: defaultValue.deploy.add,
   }
 
   componentWillMount() {
@@ -57,8 +38,8 @@ class Modules extends Component {
     return (
       <div>
         <div style={{ margin: 10, textAlign: 'right' }}>
-          <Button type="primary" onClick={() => { this.setState({ AddModalVisible: true }) }} style={{ marginRight: 8 }}>添加</Button>
-          <Button type="primary" onClick={() => { this.getModulesData() }}>刷新</Button>
+          <Button type="primary" onClick={() => { this.setState({ AddModalVisible: true }); }} style={{ marginRight: 8 }}>添加</Button>
+          <Button type="primary" onClick={() => { this.getModulesData(); }}>刷新</Button>
         </div>
         <Modal
           title="详细信息"
@@ -92,22 +73,22 @@ class Modules extends Component {
         </Modal>
         <Table pagination={false} loading={this.state.loadState} columns={this.columns} dataSource={this.state.data} />
       </div>
-    )
+    );
   }
 
   async showModuleDetails(moduleId) {
     this.setState({ dataDetails: '', loadState: true, ViewModalVisible: true });
     let _r = await ModulesService.getOne(moduleId);
-    this.setState({ dataDetails: this.formatJson(JSON.stringify(_r)), loadState: false })
+    this.setState({ dataDetails: this.formatJson(JSON.stringify(_r)), loadState: false });
   }
   async getModulesData() {
     let _r = await ModulesService.getList();
-    this.setState({ data: _r, loadState: false })
+    this.setState({ data: _r, loadState: false });
   }
   delModule = async (id) => {
     let r = await ModulesService.del(id);
     if (r.status == 204) {
-      message.info('success', 3)
+      message.info('success', 3);
       this.getModulesData();
     } else {
       message.info(`status:${r.status},message:${r.message}`, 4);

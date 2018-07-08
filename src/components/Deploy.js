@@ -37,7 +37,7 @@ class Deploy extends Component {
       <span>
 
         <a href="javascript:;" onClick={() => {
-          this.delModule(record.srvcId,record.instId)
+          this.delModule(record.srvcId,record.instId);
         }}>删除</a>
       </span>
     ),
@@ -62,23 +62,23 @@ class Deploy extends Component {
     let _r = await deployService.getOne(moduleId,instanceId);
     console.log('r',_r);
     
-    this.setState({ dataDetails:JSON.stringify(_r), loadState: false })
+    this.setState({ dataDetails:JSON.stringify(_r), loadState: false });
   }
   async addModule(p){
     let r =  await deployService.save(p);
-    message.info(r, 4)
+    message.info(r, 4);
     this.getModulesData();
   }
 
   async getModulesData() {
-    this.setState({ loadState: true })
+    this.setState({ loadState: true });
     let _r = await deployService.getHealth();
-    this.setState({ data: _r, loadState: false })
+    this.setState({ data: _r, loadState: false });
   }
   async delModule(mid,instId) {
     let r = await deployService.del(mid,instId);
     if (r.status == 204) {
-      message.info('success', 3)
+      message.info('success', 3);
       this.getModulesData();
     } else {
       message.info(`status:${r.status},message:${r.message}`, 4);
@@ -88,8 +88,8 @@ class Deploy extends Component {
     return (
       <div>
         <div style={{ margin: 10, textAlign: 'right' }}>
-          <Button type="primary" onClick={() => { this.setState({ AddModalVisible: true }) }} style={{ marginRight: 8 }}>添加</Button>
-          <Button type="primary" onClick={() => { this.getModulesData() }}>刷新</Button>
+          <Button type="primary" onClick={() => { this.setState({ AddModalVisible: true }); }} style={{ marginRight: 8 }}>添加</Button>
+          <Button type="primary" onClick={() => { this.getModulesData(); }}>刷新</Button>
         </div>
         <Table pagination={false} loading={this.state.loadState} columns={this.columns} dataSource={this.state.data} />
         <Modal
@@ -112,7 +112,7 @@ class Deploy extends Component {
             clearValue={!this.state.AddModalVisible} onClick={this.addModule.bind(this)} />
         </Modal>
       </div>
-    )
+    );
   }
 }
 

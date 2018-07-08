@@ -1,5 +1,4 @@
-import host from '../../src/appConfig';
-const axios = require('axios');
+import { axios,host } from './baseService.js';
 
 class DeployService {
     static async getOne(service_id,instance_id) {
@@ -11,31 +10,31 @@ class DeployService {
             });
             return _r.data;
         } catch (error) {
-            return error.response.data
+            return error.response.data;
         }
     }
 
     static async getHealth() {
         let _mdata = await axios.get(host + '/_/discovery/health');
         _mdata.data.forEach((item, index) => {
-            item.key = index
+            item.key = index;
         });
         return _mdata.data;
     }
     static async getList() {
         let _mdata = await axios.get(host + '/_/discovery/modules');
         _mdata.data.forEach((item, index) => {
-            item.key = index
+            item.key = index;
         });
         return _mdata.data;
     }
     static async save(params) {
         try {
             let r = await axios.post(host + '/_/discovery/modules', params);
-            return r.statusText
+            return r.statusText;
 
         } catch (error) {
-            return error.response.data
+            return error.response.data;
         }
     }
     /**
@@ -49,9 +48,9 @@ class DeployService {
                     return status >= 200 && status < 500;
                 }
             });
-            return { status: r.status, message: r.data }
+            return { status: r.status, message: r.data };
         } catch (error) {
-            return error
+            return error;
         }
     }
 

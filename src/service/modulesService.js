@@ -1,47 +1,49 @@
-import axios from 'axios'
-import host from '../appConfig.js'; 
-
+import { axios,host } from './baseService.js';
+/**
+ * modelus
+ */
 class ModulesService {
+    
     static async getOne(module_id) {
         let _mdata = await axios.get(host + '/_/proxy/modules/'+module_id);
         return _mdata.data;
     }
     static async getList() {
-        let _mdata = await axios.get(host + '/_/proxy/modules');
+        let _mdata = await axios.get(host + '/_/proxy/modules',{headers:{}});
         _mdata.data.forEach((item, index) => {
-            item.key = index
+            item.key = index;
         });
         return _mdata.data;
     }
-    static async save(params) {
+    static  async save(params) {
         try {
             let r= await axios.post(host + '/_/proxy/modules',params,{
                 header:{
                     'Content-Type':'application/json'
                 }
             });
-            return r.statusText
+            return r.statusText;
             
         } catch (error) {
 
-            return error
+            return error;
         }
     }
     /**
      * 删除模块
      * @param {String} moduleId  模块id
      */
-    static async del(moduleId){
+    static  async del(moduleId){
         
         try {
             let r= await axios.delete(host+'/_/proxy/modules/'+moduleId,{validateStatus:function(status){
                 return status >= 200 && status <500;
               }});
-            return {status:r.status,message:r.data}
+            return {status:r.status,message:r.data};
            
         } catch (error) {
             console.log('r',error);
-            return 123
+            return 123;
         }
     }
 
@@ -50,10 +52,10 @@ class ModulesService {
             let r= await axios.post(host + '/_/discovery/modules',params);
           
             
-            return r.statusText
+            return r.statusText;
             
         } catch (error) {
-            return error.response.data
+            return error.response.data;
         }
     }
     
@@ -65,11 +67,11 @@ class ModulesService {
         try {
             let _mdata= await axios.get(host+'/_/proxy/tenants/'+tId+'/modules');
             _mdata.data.forEach((item, index) => {
-                item.key = index
+                item.key = index;
             });
             return _mdata.data;
         } catch (error) {
-            return error
+            return error;
         }
     }
 }

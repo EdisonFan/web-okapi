@@ -1,17 +1,15 @@
-import axios from 'axios'
-import host from '../appConfig.js'; 
-
+import { axios,host ,axios_token, axios_tenant,axios_tenant_token} from './baseService.js';
+import { SERVICE_MESSAGE, SERVICE_STATUS } from '../config/serviceConfig.js';
+const queryString = require('query-string');
 class UsersService {
     /**
      * Return a list of users (header里需要x-okapi-token)
      */
-    static async getList() {
-        let _mdata = await axios.get(host + '/users',{
-            headers:{
-                "x-okapi-token":"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsInVzZXJfaWQiOiJhZG1pbklkIiwidGVuYW50IjoidXNlcmxpYiJ9.6rBlXLPRQYz9tZ7y2-CVv3Ao2Gpyhb9FKHWzTdPnghd-nx_lejEpaIKw1aYICYVCrVmAndSGuh45E59FCit9bg"
-            }
-        });
-       
+    static async getList(limit=100,query) {
+        let queryObj={query,limit};
+        let queryStr =queryString.stringify(queryObj);
+        let _mdata = await axios_token.get(host + '/users?'+queryStr);
+        
         return _mdata.data.users;
 
         // `
@@ -40,7 +38,7 @@ class UsersService {
      * @param {String} userId 
      */
     static async getOne(userId) {
-        let _mdata = await axios.get(host + `/users/${userId}`);
+        let _mdata = await axios_token.get(host + `/users/${userId}`);
         return _mdata.data;
         // `
         // {
@@ -82,11 +80,19 @@ class UsersService {
     //  `
     static async save(params) {
         try {
-            let r= await axios.post(host + '/users',params);
-            return r.statusText
+            let _r= await axios_tenant_token.post(host + '/users',params);
+            switch (_r.status) {
+                case 201:
+                    return {message:SERVICE_MESSAGE.success,status:SERVICE_STATUS.ok};
+                case 400:
+                    return {message:_r.data,status:SERVICE_STATUS.error};
+                default:
+                    return {message:SERVICE_MESSAGE.unknown_err,status:SERVICE_STATUS.error,data:_r.data};
+                    
+            }
             
         } catch (error) {
-            return error.response.data
+            return error;
         }
     }
     /**
@@ -96,31 +102,31 @@ class UsersService {
     static async del(userId){
         try {
            
-            let r= await axios.delete(host+`/users/${userId}`,{validateStatus:function(status){
-                return status >= 200 && status <600;
+            let r= await axios_tenant_token.delete(host+`/users/${userId}`,{validateStatus:function(status){
+                return status <600;
               }});
-            return {status:r.status,message:r.data}
+            return {status:r.status,message:r.data};
         } catch (error) {
-            return error
+            return error;
         }
     }
 
     static async bindModule(params,tenantId){
         try {
             let r= await axios.post(host + '/_/proxy/tenants/'+tenantId+'/modules',params);
-            return r.statusText
+            return r.statusText;
             
         } catch (error) {
-            return error.response.data
+            return error.response.data;
         }
     }
     static async unBindModule(tenant_id,module_id){
         try {
             let r= await axios.delete(host + '/_/proxy/tenants/'+tenant_id+'/modules/'+module_id);
-            return r.statusText
+            return r.statusText;
             
         } catch (error) {
-            return error
+            return error;
         }
     }
 }
