@@ -1,9 +1,9 @@
-const Koa = require('koa');
+﻿const Koa = require('koa');
 const axios = require('axios');
 const cors = require('koa2-cors');
 const bodyParser = require('koa-bodyparser');
 const app = new Koa();
-const okapiHost='222.29.81.101';
+const okapiHost='222.29.81.136';
 const okapiPort='9130';
 app.use(bodyParser());
 
@@ -30,7 +30,7 @@ const main=async ( ctx ) => {
 app.use(cors({
     "origin": ctx=>'*',
     exposeHeaders: ['WWW-Authenticate', 'Server-Authorization','x-okapi-tenant','x-okapi-token'],
-    maxAge: 86400,
+    maxAge: 10,
     credentials: true,
     allowMethods: ['POST', 'DELETE', 'PUT'],
     allowHeaders: ['Content-Type', 'Authorization', 'Accept','x-okapi-tenant','x-okapi-token'],
@@ -169,7 +169,7 @@ async function GetHandle(ctx) {
     }
     catch (error) {
         // ctx.response=error.response;
-        ctx.response.status = error.response.status;
-        ctx.response.body = error.response.data;
+        ctx.response.status = 500;
+        ctx.response.body = error.message;
     }
 }

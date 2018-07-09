@@ -21,6 +21,13 @@ class DeployService {
         });
         return _mdata.data;
     }
+    static async getHealthOne(srvid) {
+        let _mdata = await axios.get(host + '/_/discovery/health/'+srvid);
+        _mdata.data.forEach((item, index) => {
+            item.key = index;
+        });
+        return _mdata.data;
+    }
     static async getList() {
         let _mdata = await axios.get(host + '/_/discovery/modules');
         _mdata.data.forEach((item, index) => {

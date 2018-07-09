@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import { Table, Divider, Button, Modal, message, Switch, Icon, Popconfirm, Input } from 'antd';
 import {
-  Form, Select, InputNumber, Radio,
-  Slider, Upload, Rate, Transfer
+  Form, Select, Transfer
 } from 'antd';
 import UsersService from '../service/usersService';
-import SimpleContent from './SimpleContent.jsx';
-import defaultValue from '../config/defalutValue';
 import groupsService from '../service/groupsService';
 import { SERVICE_STATUS } from '../config/serviceConfig';
 import loginService from '../service/loginService';
@@ -15,8 +12,6 @@ const uuidv1 = require('uuid/v1');
 const { TextArea } = Input;
 const FormItem = Form.Item;
 const Option = Select.Option;
-const RadioButton = Radio.Button;
-const RadioGroup = Radio.Group;
 
 
 class Users extends Component {
@@ -46,7 +41,7 @@ class Users extends Component {
     userId: '',
     modulesData: [],
     detailsVisible: false,
-    PermissionsVisible:false,//权限模块显示开关
+    PermissionsVisible: false,//权限模块显示开关
   }
 
   componentWillMount() {
@@ -54,18 +49,17 @@ class Users extends Component {
   }
   getDeatails = async (id) => {
     let _r = await UsersService.getOne(id);
-    console.log(_r);
     this.setState({ dataDetails: JSON.stringify(_r), detailsVisible: true });
 
   }
-  async getData() {
-   
-    let query=undefined;
-    if(document.getElementById('userName')){
-      let userName=document.getElementById('userName').value;
-      query=`(username==*${userName}*)`;
+  async getData(value) {
+
+    let query = undefined;
+    if (value) {
+      let userName =value;
+      query = `(username==*${userName}*)`;
     }
-    let _r = await UsersService.getList(30,query);
+    let _r = await UsersService.getList(30, query);
     this.setState({ data: _r, loadState: false });
   }
   async del(id) {
@@ -81,16 +75,16 @@ class Users extends Component {
   hideModule = () => this.setState({ bindModulesVisible: false });
   showPermissions = (userId) => {
     this.setState({ PermissionsVisible: true, userId });
-   
+
   }
-  
+
   render() {
+    const Search = Input.Search;
     return (
       <div>
         <div style={{ margin: 10, textAlign: 'right' }}>
-          <Input placeholder='userName' style={{width:200,marginRight:10}} id='userName' />
-          <Button type="primary" onClick={() => { this.getData(); }} style={{ marginRight: 8 }}>搜索</Button>
-          <Button type="primary" onClick={() => { this.setState({ AddModalVisible: true }); }} >添加</Button>
+          <Search enterButton placeholder="用户名" onPressEnter={e=>this.getData(e.target.value)} onSearch={e => this.getData(e)}style={{ width: 200, marginRight: 8 }}/>
+          <Button type="primary" onClick={() => { this.setState({ AddModalVisible: true }); }} icon='file-add' style={{width:50}} />
         </div>
         <Modal
           title="详细信息"
@@ -115,9 +109,9 @@ class Users extends Component {
           footer={false}
           width={600}
         >
-          <Permissions userId={this.state.userId}/>
+          <Permissions userId={this.state.userId} />
         </Modal>
-        <Table pagination={false} loading={this.state.loadState} columns={this.columns} dataSource={this.state.data} />
+        <Table rowKey={record=>record.id} pagination={false} loading={this.state.loadState} columns={this.columns} dataSource={this.state.data} />
       </div>
     );
   }
@@ -172,19 +166,19 @@ class EditUser extends React.Component {
               { required: true, message: 'Please select your group!' },
             ],
           })(
-            <Select placeholder="Please select a group" onChange={function(value, option){
+            <Select placeholder="Please select a group" onChange={function (value, option) {
               console.log(value, option);
               return false;
-            }} 
-            onSelect={function(value, option){
-              console.log('onSelect',value, option);
-              return false;
-            }} 
+            }}
+              onSelect={function (value, option) {
+                console.log('onSelect', value, option);
+                return false;
+              }}
             >
 
               {this.state.userGroups.map((v, i) => (
                 <Option key={i} value={v.id} >{v.group}</Option>
-                
+
               ))}<Option key={'add'} value="" >+ Add </Option>
             </Select>
           )}
@@ -269,18 +263,18 @@ class Permissions extends React.Component {
   state = {
     allData: [],
     targetKeys: [],
-    userId:'',
-    permissionId:'',
-    loading:false
+    userId: '',
+    permissionId: '',
+    loading: false
   }
   componentWillMount() {
     this.getAllList();
-    if(this.props.userId){
+    if (this.props.userId) {
       this.getItemByUserId(this.props.userId);
     }
   }
-  componentWillReceiveProps(nextProps){
-    if(nextProps.userId!==this.state.userId){
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.userId !== this.state.userId) {
       this.getItemByUserId(nextProps.userId);
     }
   }
@@ -294,9 +288,9 @@ class Permissions extends React.Component {
           targetKeys={this.state.targetKeys}
           onChange={this.handleChange}
           render={item => item.title}
-          listStyle={{width: 250,height: 300}}
+          listStyle={{ width: 250, height: 300 }}
         />
-        <Button type="primary" loading={this.state.loading} style={{margin:"10px auto"}} onClick={this.commit.bind(this)}>确定</Button>
+        <Button type="primary" loading={this.state.loading} style={{ margin: "10px auto" }} onClick={this.commit.bind(this)}>确定</Button>
       </div>
     );
   }
@@ -304,19 +298,19 @@ class Permissions extends React.Component {
     this.setState({ targetKeys });
   }
 
-  commit=async()=>{
+  commit = async () => {
     // this.state.loading=true;
     // this.forceUpdate();
     console.log('save');
-    let params={
-      "id" : this.state.permissionId,
-      "userId" : this.state.userId,
-      "permissions" :this.state.targetKeys
+    let params = {
+      "id": this.state.permissionId,
+      "userId": this.state.userId,
+      "permissions": this.state.targetKeys
     };
-    let _r= permiService.perms_users_id.put(this.state.permissionId,JSON.stringify(params));
-    if(_r.status===SERVICE_STATUS.ok){
+    let _r = permiService.perms_users_id.put(this.state.permissionId, JSON.stringify(params));
+    if (_r.status === SERVICE_STATUS.ok) {
       console.log(_r);
-      
+
     }
   }
   getAllList = async () => {
@@ -334,11 +328,11 @@ class Permissions extends React.Component {
       this.setState({ allData });
     }
   }
-  getItemByUserId=async(userId)=>{
-    let _r=await permiService.perms_user.get(1,`(userId==${userId})`);
-    this.setState({userId});
-    if(_r.status===SERVICE_STATUS.ok && _r.data.totalRecords===1){
-      this.setState({ targetKeys:_r.data.permissionUsers[0].permissions,permissionId:_r.data.permissionUsers[0].id });
+  getItemByUserId = async (userId) => {
+    let _r = await permiService.perms_user.get(1, `(userId==${userId})`);
+    this.setState({ userId });
+    if (_r.status === SERVICE_STATUS.ok && _r.data.totalRecords === 1) {
+      this.setState({ targetKeys: _r.data.permissionUsers[0].permissions, permissionId: _r.data.permissionUsers[0].id });
     }
   }
   filterOption = (inputValue, option) => {

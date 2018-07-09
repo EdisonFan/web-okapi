@@ -1,4 +1,4 @@
-import { axios,host ,axios_token, axios_tenant,axios_tenant_token} from './baseService.js';
+import { axios,host ,axios_token, axios_tenant_token} from './baseService.js';
 import { SERVICE_MESSAGE, SERVICE_STATUS } from '../config/serviceConfig.js';
 const queryString = require('query-string');
 class UsersService {

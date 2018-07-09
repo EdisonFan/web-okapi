@@ -60,8 +60,6 @@ class Deploy extends Component {
   async showDetails(moduleId,instanceId) {
     this.setState({ dataDetails: '', loadState: true, detailsVisible: true });
     let _r = await deployService.getOne(moduleId,instanceId);
-    console.log('r',_r);
-    
     this.setState({ dataDetails:JSON.stringify(_r), loadState: false });
   }
   async addModule(p){
@@ -73,7 +71,7 @@ class Deploy extends Component {
   async getModulesData() {
     this.setState({ loadState: true });
     let _r = await deployService.getHealth();
-    this.setState({ data: _r, loadState: false });
+    this.setState({ data: _r,dataSearch:_r, loadState: false });
   }
   async delModule(mid,instId) {
     let r = await deployService.del(mid,instId);
@@ -85,11 +83,13 @@ class Deploy extends Component {
     }
   }
   render() {
+    const Search = Input.Search;
     return (
       <div>
+        
         <div style={{ margin: 10, textAlign: 'right' }}>
-          <Button type="primary" onClick={() => { this.setState({ AddModalVisible: true }); }} style={{ marginRight: 8 }}>添加</Button>
-          <Button type="primary" onClick={() => { this.getModulesData(); }}>刷新</Button>
+          <Search enterButton placeholder="输入模块id" onPressEnter={e=>this.search(e.target.value)} onSearch={e => this.search(e)}style={{ width: 200, marginRight: 8 }}/>
+          <Button type="primary" onClick={() => { this.setState({ AddModalVisible: true }); }} icon='file-add' style={{width:50}} />
         </div>
         <Table pagination={false} loading={this.state.loadState} columns={this.columns} dataSource={this.state.data} />
         <Modal
@@ -113,6 +113,13 @@ class Deploy extends Component {
         </Modal>
       </div>
     );
+  }
+
+  search=(value)=> {
+    let data = this.state.dataSearch.filter((item) => {
+      return item.srvcId.indexOf(value) > -1;
+    });
+    this.setState({ data });
   }
 }
 

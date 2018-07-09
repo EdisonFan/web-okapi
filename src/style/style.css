@@ -2,3 +2,9 @@
     width: 10px;
     height: 10px;
 }
+.bindModules .ant-modal-body{
+    padding: 0
+}
+.center{
+    text-align: center
+}

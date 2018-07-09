@@ -37,9 +37,6 @@ class Header extends React.Component {
         <Menu.Item key="login" >
           <Link to='/login'> <Icon type="user" />登陆</Link>
         </Menu.Item>
-        <Menu.Item key="login" >
-          <Link to='/login'> <Icon type="user" />登陆</Link>
-        </Menu.Item>
       </Menu>
     );
   }

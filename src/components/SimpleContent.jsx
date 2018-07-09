@@ -22,7 +22,7 @@ class simpleContentComp extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
-        this.props.onClick(this.props.form.getFieldValue('parms'))
+        this.props.onClick(this.props.form.getFieldValue('parms'));
       }
     });
   }

@@ -16,9 +16,9 @@ const defaultValue = {
         `,
     },
     deploy: {
-        add: `
+        add: (srvcId)=>`
         {
-            "srvcId": "folio-hello-vertx-0.1-SNAPSHOT",
+            "srvcId": "${srvcId}",
             "instId":"localhost-8080",
             "url":"http://localhost:8080"
         }
