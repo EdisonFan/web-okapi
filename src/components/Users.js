@@ -50,7 +50,6 @@ class Users extends Component {
   getDeatails = async (id) => {
     let _r = await UsersService.getOne(id);
     this.setState({ dataDetails: JSON.stringify(_r), detailsVisible: true });
-
   }
   async getData(value) {
 
@@ -60,7 +59,12 @@ class Users extends Component {
       query = `(username==*${userName}*)`;
     }
     let _r = await UsersService.getList(30, query);
-    this.setState({ data: _r, loadState: false });
+    if(_r.status===SERVICE_STATUS.ok){
+      this.setState({ data: _r, loadState: false });
+    }else{
+      message.error(_r.message);
+      this.setState({ loadState: false });
+    }
   }
   async del(id) {
     let r = await UsersService.del(id);
@@ -213,6 +217,8 @@ class EditUser extends React.Component {
     let _r = await groupsService.groups.get();
     if (_r.status === SERVICE_STATUS.ok) {
       this.setState({ userGroups: _r.data.usergroups });
+    }else{
+      message.error(`userGroups:${_r.message}`);
     }
   }
   saveUser = async (values) => {

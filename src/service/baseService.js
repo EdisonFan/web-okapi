@@ -9,28 +9,20 @@ import host from '../appConfig.js';
 //     };
 //     getHost() { return host };
 // }
+let headersObj = [];
+if (sessionStorage.getItem("x-okapi-tenant")) {
+    headersObj["x-okapi-tenant"]= sessionStorage.getItem("x-okapi-tenant");
+}
+if (sessionStorage.getItem("x-okapi-token")) {
+    headersObj["x-okapi-token"]=sessionStorage.getItem("x-okapi-token");
+}
 
-let axios= Axios.create();
-
-let axios_tenant= Axios.create({
-    headers:{
-        'x-okapi-tenant':sessionStorage.getItem("x-okapi-tenant")||''
-    }
-});
-let axios_token= Axios.create({
-    baseURL: 'https://api.example.com',
-    headers:{
-        'x-okapi-token':sessionStorage.getItem("x-okapi-token")||''
-    }
-});
-let axios_tenant_token= Axios.create({
-    headers:{
-        'x-okapi-tenant':sessionStorage.getItem("x-okapi-tenant")||'',
-        'x-okapi-token':sessionStorage.getItem("x-okapi-token")||'',
-        'Content-Type': 'application/json'
-    },
+let axios = Axios.create({
+    baseURL: host,
+    headers: {...headersObj},
     validateStatus: function (status) {
         return status < 600;
     }
 });
-export { axios,host,axios_tenant,axios_token,axios_tenant_token };
+
+export { axios };

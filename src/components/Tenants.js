@@ -145,8 +145,8 @@ class Tenants extends Component {
             clearValue={!this.state.AddModalVisible} onClick={
               async (p) => {
                 let r = await TenantsService.save(p);
-                this.getData();
                 message.info(r, 4);
+                this.getData();
               }
             } />
         </Modal>

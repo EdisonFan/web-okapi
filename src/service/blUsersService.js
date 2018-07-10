@@ -1,4 +1,4 @@
-import { axios, host } from './baseService.js';
+import { axios } from './baseService.js';
 import {SERVICE_STATUS,SERVICE_MESSAGE} from '../config/serviceConfig';
 
 class blUsersService {
@@ -7,7 +7,7 @@ class blUsersService {
         post: async (username, password, x_okapi_tenant) => {
 
             try {
-                let _r = await axios.post(host + `/bl-users/login`, `{
+                let _r = await axios.post( `/bl-users/login`, `{
                     "username":"${username}",
                     "password":"${password}"
                     }`

@@ -1,16 +1,30 @@
-import { axios,host ,axios_token, axios_tenant_token} from './baseService.js';
+import { axios } from './baseService.js';
 import { SERVICE_MESSAGE, SERVICE_STATUS } from '../config/serviceConfig.js';
 const queryString = require('query-string');
 class UsersService {
     /**
      * Return a list of users (header里需要x-okapi-token)
      */
-    static async getList(limit=100,query) {
-        let queryObj={query,limit};
-        let queryStr =queryString.stringify(queryObj);
-        let _mdata = await axios_token.get(host + '/users?'+queryStr);
-        
-        return _mdata.data.users;
+    static async getList(limit = 100, query) {
+        let queryObj = { query, limit };
+        let queryStr = queryString.stringify(queryObj);
+        try {
+            let _r = await axios.get('/users?' + queryStr);
+            switch (_r.status) {
+                case 200:   //success
+                    return { message: SERVICE_MESSAGE.success, status: SERVICE_STATUS.ok, data: _r.data.users };
+                case 400:
+                    return { message: _r.data, status: SERVICE_STATUS.error };
+                case 403:
+                    return { message: _r.data, status: SERVICE_STATUS.error };
+                case 500:   //Internal server error
+                    return { message: _r.data, status: SERVICE_STATUS.error };
+                default:
+                    return { message: SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error, data: _r.data };
+            }
+        } catch (error) {
+            return { message: SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error, data: error };
+        }
 
         // `
         // {
@@ -38,7 +52,7 @@ class UsersService {
      * @param {String} userId 
      */
     static async getOne(userId) {
-        let _mdata = await axios_token.get(host + `/users/${userId}`);
+        let _mdata = await axios.get(`/users/${userId}`);
         return _mdata.data;
         // `
         // {
@@ -80,17 +94,17 @@ class UsersService {
     //  `
     static async save(params) {
         try {
-            let _r= await axios_tenant_token.post(host + '/users',params);
+            let _r = await axios.post('/users', params);
             switch (_r.status) {
                 case 201:
-                    return {message:SERVICE_MESSAGE.success,status:SERVICE_STATUS.ok};
+                    return { message: SERVICE_MESSAGE.success, status: SERVICE_STATUS.ok };
                 case 400:
-                    return {message:_r.data,status:SERVICE_STATUS.error};
+                    return { message: _r.data, status: SERVICE_STATUS.error };
                 default:
-                    return {message:SERVICE_MESSAGE.unknown_err,status:SERVICE_STATUS.error,data:_r.data};
-                    
+                    return { message: SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error, data: _r.data };
+
             }
-            
+
         } catch (error) {
             return error;
         }
@@ -99,32 +113,30 @@ class UsersService {
      * Delete user item with given {userId} 
      * @param {String} moduleId  模块id
      */
-    static async del(userId){
+    static async del(userId) {
         try {
-           
-            let r= await axios_tenant_token.delete(host+`/users/${userId}`,{validateStatus:function(status){
-                return status <600;
-              }});
-            return {status:r.status,message:r.data};
+
+            let r = await axios.delete(`/users/${userId}`);
+            return { status: r.status, message: r.data };
         } catch (error) {
             return error;
         }
     }
 
-    static async bindModule(params,tenantId){
+    static async bindModule(params, tenantId) {
         try {
-            let r= await axios.post(host + '/_/proxy/tenants/'+tenantId+'/modules',params);
+            let r = await axios.post('/_/proxy/tenants/' + tenantId + '/modules', params);
             return r.statusText;
-            
+
         } catch (error) {
             return error.response.data;
         }
     }
-    static async unBindModule(tenant_id,module_id){
+    static async unBindModule(tenant_id, module_id) {
         try {
-            let r= await axios.delete(host + '/_/proxy/tenants/'+tenant_id+'/modules/'+module_id);
+            let r = await axios.delete('/_/proxy/tenants/' + tenant_id + '/modules/' + module_id);
             return r.statusText;
-            
+
         } catch (error) {
             return error;
         }

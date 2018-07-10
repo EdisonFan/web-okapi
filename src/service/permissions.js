@@ -1,4 +1,4 @@
-import { axios, host, axios_tenant_token } from './baseService.js';
+import { axios } from './baseService.js';
 import {SERVICE_STATUS,SERVICE_MESSAGE} from '../config/serviceConfig';
 const queryString = require('query-string');
 
@@ -13,7 +13,7 @@ class permiService {
             let queryObj={query,length};
             let queryStr=queryString.stringify(queryObj);
            try {
-                let _r=await axios_tenant_token.get(host+`/perms/users?`+queryStr);
+                let _r=await axios.get(`/perms/users?`+queryStr);
                 switch (_r.status) {
                     case 200:   //success
                         return {message:SERVICE_MESSAGE.success,status:SERVICE_STATUS.ok,data:_r.data};
@@ -33,7 +33,7 @@ class permiService {
         },
         post:async(parms)=>{
             try {
-                let _r=await axios_tenant_token.post(host+`/perms/users`,parms);
+                let _r=await axios.post(`/perms/users`,parms);
                 switch (_r.status) {
                     case 201:   //success
                         return {message:SERVICE_MESSAGE.success,status:SERVICE_STATUS.ok,data:_r.data};
@@ -56,7 +56,7 @@ class permiService {
         put:async(permissionId,parms)=>{
            
             try {
-                let _r=await  axios_tenant_token.put(host+`/perms/users/${permissionId}`,parms);
+                let _r=await  axios.put(`/perms/users/${permissionId}`,parms);
                 switch (_r.status) {
                     case 200:   //success
                         return {message:SERVICE_MESSAGE.success,status:SERVICE_STATUS.ok,data:_r.data};
@@ -76,7 +76,7 @@ class permiService {
         //Get a list of existing permissions
         get:async()=>{
             try {
-                let _r=await axios_tenant_token.get(host+`/perms/permissions?length=1000`);
+                let _r=await axios.get(`/perms/permissions?length=1000`);
                 switch (_r.status) {
                     case 200:   //success
                         return {message:SERVICE_MESSAGE.success,status:SERVICE_STATUS.ok,data:_r.data};
@@ -97,7 +97,7 @@ class permiService {
         //Get permissions that a user has
         get:async(id)=>{
             try {
-                let _r=await axios_tenant_token.get(host+`/perms/users/${id}/permissions`);
+                let _r=await axios.get(`/perms/users/${id}/permissions`);
                 switch (_r.status) {
                     case 200:   //success
                         return {message:SERVICE_MESSAGE.success,status:SERVICE_STATUS.ok,data:_r.data};
