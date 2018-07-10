@@ -53,7 +53,7 @@ class Modules extends Component {
     const Search = Input.Search;
     return (
       <div>
-        <div style={{ margin: 10, textAlign: 'right' }}>
+        <div style={{ margin: "10px 0", textAlign: 'right' }}>
           <Search enterButton placeholder="输入模块id" style={{ width: 200, marginRight: 8 }}
             onSearch={e => this.search(e)}
             onPressEnter={e => this.search(e.target.value)}
@@ -116,7 +116,12 @@ class Modules extends Component {
   }
   async getModulesData() {
     let _r = await ModulesService.getList();
-    this.setState({ data: _r, dataSearch: _r, loadState: false });
+    if(_r.status===SERVICE_STATUS.ok){
+      this.setState({ data: _r.data, dataSearch: _r, loadState: false });
+    }else{
+      this.setState({ loadState: false });
+      message.info(_r.message);
+    }
   }
   delModule = async (id) => {
     let r = await ModulesService.del(id);
@@ -128,10 +133,14 @@ class Modules extends Component {
     }
   }
   addModule = async (p) => {
-    let r = await ModulesService.save(p);
-    message.info(r, 4);
-    this.getModulesData();
-    this.setState({ AddModalVisible: false });
+    let _r = await ModulesService.save(p);
+    if(_r.status===SERVICE_STATUS.ok){
+      this.getModulesData();
+      message.info(_r.message);
+      this.setState({ AddModalVisible: false });
+    }else{
+      message.info(_r.message);
+    }
   }
   addDeployModule = async (p) => {
     let r = await ModulesService.deploySave(p);

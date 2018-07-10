@@ -3,11 +3,24 @@ import { SERVICE_STATUS, SERVICE_MESSAGE } from '../config/serviceConfig';
 
 class TenantsService {
     static async getList() {
-        let _mdata = await axios.get('/_/proxy/tenants');
-        _mdata.data.forEach((item, index) => {
-            item.key = index;
-        });
-        return _mdata.data;
+        try {
+            let _r = await axios.get('/_/proxy/tenants');
+            switch (_r.status) {
+                case 200:   //success
+                    return {message:SERVICE_MESSAGE.success,status:SERVICE_STATUS.ok,data:_r.data};
+                case 400:   //Bad request
+                    return {message:_r.data,status:SERVICE_STATUS.error};
+                case 404:   //Validation errors
+                    return {message:_r.data,status:SERVICE_STATUS.error};
+                case 500:   //Internal server error
+                    return {message:_r.data,status:SERVICE_STATUS.error};
+                default:
+                    return {message:SERVICE_MESSAGE.unknown_err,status:SERVICE_STATUS.error,data:_r.data};
+            }
+        } catch (error) {
+            return {message:SERVICE_MESSAGE.unknown_err,status:SERVICE_STATUS.error,data:error};
+        }
+       
     }
     static async save(params) {
         try {

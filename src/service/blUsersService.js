@@ -27,6 +27,7 @@ class blUsersService {
                         if (_r.headers['x-okapi-token']) {
                             sessionStorage.setItem('x-okapi-token', _r.headers['x-okapi-token']);
                             sessionStorage.setItem('x-okapi-tenant',_r.headers['x-okapi-tenant']); 
+                            sessionStorage.setItem('userName',username);
                             return { message: SERVICE_MESSAGE.success, status: SERVICE_STATUS.ok };
                         }
                         return { message: SERVICE_MESSAGE.login_no_token, status: SERVICE_STATUS.error };

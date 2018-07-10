@@ -19,7 +19,7 @@ class Tenants extends Component {
             <a href="javascript:;" >删除</a>
           </Popconfirm>
           <Divider type="vertical" />
-          <a href="javascript:;" onClick={this.showModule.bind(this,record.id)}>绑定模块</a>
+          <a href="javascript:;" onClick={this.showModule.bind(this, record.id)}>绑定模块</a>
         </span>
       ),
     }];
@@ -56,11 +56,16 @@ class Tenants extends Component {
   }
   async getData(tenantValue) {
     let _r = await TenantsService.getList();
-    this.setState({ data: _r, dataSearch: _r, loadState: false });
+    if(_r.status===SERVICE_STATUS.ok){
+      this.setState({ data: _r.data, dataSearch: _r, loadState: false });
+    }else{
+      this.setState({ loadState: false });
+      message.info(_r.message);
+    }
   }
   async del(id) {
     let r = await TenantsService.del(id);
-    if (r.status == 204) {
+    if (r.status === 204) {
       message.info('success', 3);
       this.getData();
     } else {
@@ -97,16 +102,19 @@ class Tenants extends Component {
     this.setState({ loadState: true });
     let _allModules = await ModulesService.getList();
     let _tenModules = await ModulesService.getListByTanId(tenantId);
-    _allModules.forEach(function (element, index, array) {
-      element['bind'] = false;
-      _tenModules.forEach((t_element, t_index, a) => {
-        if (element['id'] == t_element['id']) {
-          element['bind'] = true;
-        }
+    if (_allModules.status === SERVICE_STATUS.ok) {
+      _allModules.data.forEach(function (element, index, array) {
+        element['bind'] = false;
+        _tenModules.forEach((t_element, t_index, a) => {
+          if (element['id'] == t_element['id']) {
+            element['bind'] = true;
+          }
+        });
       });
-
-    });
-    this.setState({ modulesData: _allModules, loadState: false });
+      this.setState({ modulesData: _allModules.data, loadState: false });
+    }else{
+      message.info(_allModules.message);
+    }
   }
   render() {
     const Search = Input.Search;
@@ -143,7 +151,7 @@ class Tenants extends Component {
         >
           <Table scroll={{ y: 500 }} pagination={false} loading={this.state.loadState} columns={this.modulesColumns} dataSource={this.state.modulesData} />
         </Modal>
-        <Table pagination={false} loading={this.state.loadState} columns={this.columns} dataSource={this.state.data} />
+        <Table rowKey={(record)=>record.id} pagination={false} loading={this.state.loadState} columns={this.columns} dataSource={this.state.data} />
       </div>
     );
   }

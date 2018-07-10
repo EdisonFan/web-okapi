@@ -28,8 +28,8 @@ const main = async (ctx) => {
         instance = null;
     }
     catch (error) {
-        ctx.response.status = error.response.status;
-        ctx.response.body = error.response.data;
+        ctx.response.status = 404;
+        ctx.response.body = error.toString();
     }
 
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link ,Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 // The Header creates links that can be used to navigate
 // between routes.
@@ -42,24 +42,6 @@ class Header extends React.Component {
         <Menu.Item key="users" >
           <Link to='/users'> <Icon type="user" />用户列表</Link>
         </Menu.Item>
-        {
-          this.state.isLogin?
-            <Menu.Item key="loginout" >
-              <Link to='#' onClick={
-                ()=>{
-                  sessionStorage.setItem("x-okapi-token",'');
-                  sessionStorage.setItem("x-okapi-tenant",'');
-                  window.location.href='/login';
-                }} > 
-                <Icon type="user" />{sessionStorage.getItem('userName')}
-                </Link>
-                <span>退出</span>
-            </Menu.Item>
-            :
-            <Menu.Item key="login" >
-              <Link to='/login' > <Icon type="user" />登陆系统 / LOGIN OKAPI SYSTEM</Link>
-            </Menu.Item>
-        }
       </Menu>
 
 

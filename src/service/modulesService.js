@@ -1,4 +1,6 @@
 import { axios } from './baseService.js';
+import { SERVICE_STATUS,SERVICE_MESSAGE } from '../config/serviceConfig';
+
 /**
  * modelus
  */
@@ -8,16 +10,39 @@ class ModulesService {
         return _mdata.data;
     }
     static async getList() {
-        let _mdata = await axios.get('/_/proxy/modules');
-        _mdata.data.forEach((item, index) => {
-            item.key = index;
-        });
-        return _mdata.data;
+        try {
+            let _r = await axios.get('/_/proxy/modules');
+            switch (_r.status) {
+                case 200:
+                    _r.data.forEach((item, index) => {
+                        item.key = index;
+                    });
+                    return {message:SERVICE_MESSAGE.success,status:SERVICE_STATUS.ok,data:_r.data};
+                case 404:
+                    return { message: _r.data, status: SERVICE_STATUS.error };
+                default:
+                    
+                    return { message: _r.data, status: SERVICE_STATUS.error };
+            }
+           
+        } catch (error) {
+            return { message: error, status: SERVICE_STATUS.error };   
+        }
+       
     }
     static  async save(params) {
         try {
-            let r= await axios.post('/_/proxy/modules',params);
-            return r.statusText;
+            let _r= await axios.post('/_/proxy/modules',params);
+            switch (_r.status) {
+                case 201:   //success
+                    return {message:SERVICE_MESSAGE.success,status:SERVICE_STATUS.ok,data:_r.data};
+                case 404:   //Validation errors
+                    return {message:_r.data,status:SERVICE_STATUS.error};
+                case 500:   //Internal server error
+                    return {message:_r.data,status:SERVICE_STATUS.error};
+                default:
+                    return {message:SERVICE_MESSAGE.unknown_err,status:SERVICE_STATUS.error,data:_r.data};
+            }
         } catch (error) {
             return error;
         }
