@@ -4,6 +4,7 @@ import ModulesService from '../service/modulesService';
 import SimpleContent from './SimpleContent.jsx';
 import defaultValue from '../config/defalutValue';
 import DeployService from '../service/deployService';
+import { SERVICE_STATUS } from '../config/serviceConfig';
 const { TextArea } = Input;
 class Modules extends Component {
   columns = [
@@ -38,8 +39,8 @@ class Modules extends Component {
   showDeploy = async (record) => {
     this.setState({ AddDeployModalVisible: true, ModuleId: record.id, deployList: [] });
     let _r = await DeployService.getHealthOne(record.id);
-    if (_r) {
-      this.setState({ deployList: _r });
+    if (_r.status===SERVICE_STATUS.ok) {
+      this.setState({ deployList: _r.data });
     }
 
   }
@@ -130,6 +131,7 @@ class Modules extends Component {
     let r = await ModulesService.save(p);
     message.info(r, 4);
     this.getModulesData();
+    this.setState({ AddModalVisible: false });
   }
   addDeployModule = async (p) => {
     let r = await ModulesService.deploySave(p);

@@ -8,3 +8,32 @@
 .center{
     text-align: center
 }
+#root div > ul > li:last-child{
+    float: right;
+    background-color: #1890ff;
+    width: 268px;
+    height: 47px;
+    overflow: hidden;
+    color:#fff !important;
+}
+#root div > ul > li:last-child a{
+    color:#fff !important;
+    display: inline
+}
+#root div > ul > li:last-child span{
+    float: right;
+}
+html,body,#root{
+    width: 100%;
+    height: 100%;
+}
+.ant-layout{
+    height: 100%;
+}
+.logo{
+    margin: 20px 0;
+    text-align: center;
+    font-size: 23px;
+    font-family: -webkit-body;
+    color: #fff
+}

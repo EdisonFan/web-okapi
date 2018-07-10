@@ -3,7 +3,7 @@ const axios = require('axios');
 const cors = require('koa2-cors');
 const bodyParser = require('koa-bodyparser');
 const app = new Koa();
-const okapiHost = '10.10.168.250';
+const okapiHost = '222.29.81.101';
 const okapiPort = '9130';
 app.use(bodyParser());
 

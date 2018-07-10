@@ -60,7 +60,7 @@ class Users extends Component {
     }
     let _r = await UsersService.getList(30, query);
     if(_r.status===SERVICE_STATUS.ok){
-      this.setState({ data: _r, loadState: false });
+      this.setState({ data: _r.data, loadState: false });
     }else{
       message.error(_r.message);
       this.setState({ loadState: false });

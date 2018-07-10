@@ -1,4 +1,5 @@
 import { axios } from './baseService.js';
+import { SERVICE_MESSAGE, SERVICE_STATUS } from '../config/serviceConfig.js';
 
 class DeployService {
     static async getOne(service_id,instance_id) {
@@ -22,11 +23,26 @@ class DeployService {
         return _mdata.data;
     }
     static async getHealthOne(srvid) {
-        let _mdata = await axios.get( '/_/discovery/health/'+srvid);
-        _mdata.data.forEach((item, index) => {
-            item.key = index;
-        });
-        return _mdata.data;
+        try {
+            let _r = await axios.get( '/_/discovery/health/'+srvid);
+
+            
+            switch (_r.status) {
+                case 200:   //success
+                    _r.data.forEach((item, index) => {
+                        item.key = index;
+                    });
+                    return {message:SERVICE_MESSAGE.success,status:SERVICE_STATUS.ok,data:_r.data};
+                case 404: 
+                    return {message:_r.statusText+_r.data,status:SERVICE_STATUS.error};
+               
+                default:
+                    return {message:SERVICE_MESSAGE.unknown_err,status:SERVICE_STATUS.error,data:_r.data};
+            }
+        } catch (error) {
+            return "";
+        }
+        
     }
     static async getList() {
         let _mdata = await axios.get( '/_/discovery/modules');

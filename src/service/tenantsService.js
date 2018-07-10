@@ -1,4 +1,5 @@
 import { axios } from './baseService.js';
+import { SERVICE_STATUS, SERVICE_MESSAGE } from '../config/serviceConfig';
 
 class TenantsService {
     static async getList() {
@@ -35,10 +36,16 @@ class TenantsService {
 
     static async bindModule(params,tenantId){
         try {
-            let r= await axios.post( '/_/proxy/tenants/'+tenantId+'/modules',params,{validateStatus:function(status){
-                return status >= 200 && status <600;
-              }});
-            return r.statusText;
+            let _r= await axios.post( '/_/proxy/tenants/'+tenantId+'/modules',params);
+            switch (_r.status) {
+                case 201:   //success
+                    return {message:SERVICE_MESSAGE.success,status:SERVICE_STATUS.ok,data:_r.data};
+               
+                case 500:   //Internal server error
+                    return {message:_r.data,status:SERVICE_STATUS.error};
+                default:
+                   return {message:SERVICE_MESSAGE.unknown_err,status:SERVICE_STATUS.error};
+            }
             
         } catch (error) {
             return error.response.data;
@@ -46,8 +53,18 @@ class TenantsService {
     }
     static async unBindModule(tenant_id,module_id){
         try {
-            let r= await axios.delete( '/_/proxy/tenants/'+tenant_id+'/modules/'+module_id);
-            return r.statusText;
+            let _r= await axios.delete( '/_/proxy/tenants/'+tenant_id+'/modules/'+module_id);
+            switch (_r.status) {
+                case 204:   //success
+                    return {message:SERVICE_MESSAGE.success,status:SERVICE_STATUS.ok,data:_r.data};
+                case 400:   //Bad request
+                    return {message:_r.data,status:SERVICE_STATUS.error};
+                case 500:   //Internal server error
+                    return {message:_r.data,status:SERVICE_STATUS.error};
+                default:
+                   return {message:SERVICE_MESSAGE.unknown_err,status:SERVICE_STATUS.error};
+            }
+            
             
         } catch (error) {
             return error;

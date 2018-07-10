@@ -3,50 +3,30 @@ import { Table, Divider, Button, Modal, message, Switch, Icon, Popconfirm, Input
 import TenantsService from '../service/tenantsService';
 import SimpleContent from './SimpleContent.jsx';
 import ModulesService from '../service/modulesService';
+import { SERVICE_STATUS } from '../config/serviceConfig';
 
 class Tenants extends Component {
-  columns = [{
-    title: '序号',
-    dataIndex: 'index',
-    key: 'index',
-    render: (text, record, index) => index + 1,
-    
-  }, {
-    title: '名称',
-    dataIndex: 'name',
-    key: 'name',
-    render: text => <a href="javascript:;">{text}</a>,
-  }, {
-    title: 'ID',
-    dataIndex: 'id',
-    key: 'id',
-  }, {
-    title: 'description',
-    dataIndex: 'description',
-    key: 'description',
-  }, {
-    title: '操作',
-    key: 'action',
-    render: (text, record) => (
-      <span>
-        <Popconfirm title=''>
-          <a href="javascript:;" onClick={() => {
-            this.del(record.id);
-          }}>删除</a>
-        </Popconfirm>
-        <Divider type="vertical" />
-        <a href="javascript:;" onClick={() => {
-          this.showModule(record.id);
-
-        }}>绑定模块</a>
-
-      </span>
-    ),
-  }];
+  columns = [
+    { title: '序号', dataIndex: 'index', render: (t, r, i) => i + 1 },
+    { title: '名称', dataIndex: 'name' },
+    { title: 'ID', dataIndex: 'id' },
+    { title: 'description', dataIndex: 'description' },
+    {
+      title: '操作', key: 'action',
+      render: (text, record) => (
+        <span>
+          <Popconfirm title='确定删除吗？' onConfirm={this.del.bind(this, record.id)}>
+            <a href="javascript:;" >删除</a>
+          </Popconfirm>
+          <Divider type="vertical" />
+          <a href="javascript:;" onClick={this.showModule.bind(this,record.id)}>绑定模块</a>
+        </span>
+      ),
+    }];
   modulesColumns = [
-    { title: '序号', dataIndex: 'index', key: 'index', render: (text, record, index) => index + 1 ,width:60, className: "center"},
-    { title: '模块名称', dataIndex: 'name', key: 'name',width:200 },
-    { title: '模块ID', dataIndex: 'id', key: 'id', width:200},
+    { title: '序号', dataIndex: 'index', render: (t, r, i) => i + 1, width: 60, className: "center" },
+    { title: '模块名称', dataIndex: 'name', width: 200 },
+    { title: '模块ID', dataIndex: 'id', width: 200 },
     {
       title: '操作', key: 'action',
       render: (text, record) => (
@@ -59,7 +39,7 @@ class Tenants extends Component {
             checked={record.bind} />
         </span>
       ),
-      
+
     }
   ];
   state = {
@@ -95,14 +75,23 @@ class Tenants extends Component {
   }
   bindModule = async (tenantId, moduleId) => {
     let params = `{"id":"${moduleId}"}`;
-    let r = await TenantsService.bindModule(params, tenantId);
-    message.info(r.toString(), 3);
-    this.getModulesData(tenantId);
+    let _r = await TenantsService.bindModule(params, tenantId);
+    if (_r.status == SERVICE_STATUS.ok) {
+      message.info(_r.message);
+      this.getModulesData(tenantId);
+    } else {
+      message.info(_r.message);
+    }
+
     return false;
   }
   unBindModule = async (tenantId, moduleId) => {
-    let r = await TenantsService.unBindModule(tenantId, moduleId);
-    this.getModulesData(tenantId);
+    let _r = await TenantsService.unBindModule(tenantId, moduleId);
+    if (_r.status == SERVICE_STATUS.ok) {
+      this.getModulesData(tenantId);
+    } else {
+      message.info(_r.message);
+    }
   }
   getModulesData = async (tenantId) => {
     this.setState({ loadState: true });
@@ -142,13 +131,7 @@ class Tenants extends Component {
         >
           <SimpleContent
             defaultValue='{"id": "testlib", "name": "testlib","description": "testlib"}'
-            clearValue={!this.state.AddModalVisible} onClick={
-              async (p) => {
-                let r = await TenantsService.save(p);
-                message.info(r, 4);
-                this.getData();
-              }
-            } />
+            clearValue={!this.state.AddModalVisible} onClick={this.addTenant()} />
         </Modal>
         <Modal
           title="绑定模块"
@@ -158,7 +141,7 @@ class Tenants extends Component {
           width={580}
           className='bindModules'
         >
-          <Table scroll={{  y: 500 }} pagination={false} loading={this.state.loadState} columns={this.modulesColumns} dataSource={this.state.modulesData} />
+          <Table scroll={{ y: 500 }} pagination={false} loading={this.state.loadState} columns={this.modulesColumns} dataSource={this.state.modulesData} />
         </Modal>
         <Table pagination={false} loading={this.state.loadState} columns={this.columns} dataSource={this.state.data} />
       </div>
@@ -172,6 +155,15 @@ class Tenants extends Component {
       return item.name.indexOf(value) > -1;
     });
     this.setState({ data });
+  }
+
+  addTenant() {
+    return async (p) => {
+      let r = await TenantsService.save(p);
+      message.info(r, 4);
+      this.getData();
+      this.setState({ AddModalVisible: false });
+    };
   }
 }
 

@@ -1,25 +1,18 @@
 import React, { Component } from 'react';
-import { Table,  Tooltip, Button,  Modal,  message ,Badge,Input } from 'antd';
+import { Table,  Tooltip, Button,  Modal,  message ,Badge,Input,Popconfirm } from 'antd';
 import deployService from '../service/deployService';
 import SimpleContent from './SimpleContent';
 const uuidv1 = require('uuid/v1');
 const { TextArea } = Input;
 
 class Deploy extends Component {
-  columns = [{
-    title: '序号',
-    dataIndex: 'index',
-    key: 'index',
+  columns = [{title: '序号', dataIndex: 'index',
     render: (text, record, index) => index + 1,
   }, {
-    title: 'instId',
-    dataIndex: 'instId',
-    key: 'name',
+    title: 'instId', dataIndex: 'instId',key: 'name',
     render:(text,record)=><a href="javascript:;" onClick={this.showDetails.bind(this,record.srvcId,text)} >{text}</a>
   }, {
-    title: 'srvcId',
-    dataIndex: 'srvcId',
-    key: 'id',
+    title: 'srvcId',dataIndex: 'srvcId', key: 'id',
   }, {
     title: 'healthStatus',
     dataIndex: 'healthMessage',
@@ -35,10 +28,8 @@ class Deploy extends Component {
     key: 'action',
     render: (text, record) => (
       <span>
-
-        <a href="javascript:;" onClick={() => {
-          this.delModule(record.srvcId,record.instId);
-        }}>删除</a>
+        <Popconfirm title='确定删除吗？' onConfirm={this.delModule.bind(this,record.srvcId,record.instId)}>
+        <a href="javascript:;" >删除</a> </Popconfirm>
       </span>
     ),
   }];
@@ -73,7 +64,7 @@ class Deploy extends Component {
     let _r = await deployService.getHealth();
     this.setState({ data: _r,dataSearch:_r, loadState: false });
   }
-  async delModule(mid,instId) {
+  delModule=async (mid,instId)=>{
     let r = await deployService.del(mid,instId);
     if (r.status == 204) {
       message.info('success', 3);

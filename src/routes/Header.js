@@ -1,26 +1,34 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link ,Redirect } from 'react-router-dom';
 
 // The Header creates links that can be used to navigate
 // between routes.
-import { Menu, Icon } from 'antd';
+import { Menu, Icon,  } from 'antd';
 
 class Header extends React.Component {
   state = {
-    current: 'mail',
+    current: 'home',
+    isLogin:sessionStorage.getItem("x-okapi-token")?true:false
   }
   handleClick = (e) => {
+    
     console.log('click ', e.key);
     this.setState({
       current: e.key,
     });
   }
+  componentWillMount(){
+   let path= window.location.pathname.replace('/','')||'home';
+   this.setState({current:path});
+  }
   render() {
     return (
+
       <Menu
         onClick={this.handleClick}
         selectedKeys={[this.state.current]}
-        mode="horizontal"
+        mode="inline"
+        theme="dark"
       >
         <Menu.Item key="home" >
           <Link to="/"> <Icon type="bars" /><span className="nav-text">模块列表</span></Link>
@@ -34,10 +42,27 @@ class Header extends React.Component {
         <Menu.Item key="users" >
           <Link to='/users'> <Icon type="user" />用户列表</Link>
         </Menu.Item>
-        <Menu.Item key="login" >
-          <Link to='/login'> <Icon type="user" />登陆</Link>
-        </Menu.Item>
+        {
+          this.state.isLogin?
+            <Menu.Item key="loginout" >
+              <Link to='#' onClick={
+                ()=>{
+                  sessionStorage.setItem("x-okapi-token",'');
+                  sessionStorage.setItem("x-okapi-tenant",'');
+                  window.location.href='/login';
+                }} > 
+                <Icon type="user" />{sessionStorage.getItem('userName')}
+                </Link>
+                <span>退出</span>
+            </Menu.Item>
+            :
+            <Menu.Item key="login" >
+              <Link to='/login' > <Icon type="user" />登陆系统 / LOGIN OKAPI SYSTEM</Link>
+            </Menu.Item>
+        }
       </Menu>
+
+
     );
   }
 }
