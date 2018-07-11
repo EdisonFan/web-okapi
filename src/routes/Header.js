@@ -1,24 +1,25 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
 // The Header creates links that can be used to navigate
 // between routes.
-import { Menu, Icon,  } from 'antd';
+import { Menu, Icon, } from 'antd';
 
 class Header extends React.Component {
   state = {
     current: 'home',
-    isLogin:sessionStorage.getItem("x-okapi-token")?true:false
+    isLogin: sessionStorage.getItem("x-okapi-token") ? true : false
   }
   handleClick = (e) => {
     this.setState({
       current: e.key,
     });
   }
-  componentWillMount(){
-   let path= window.location.pathname.replace('/','')||'home';
-   this.setState({current:path});
+  componentWillMount() {
+    let path = window.location.pathname.replace('/', '') || 'home';
+    this.setState({ current: path });
+    
   }
+  
   render() {
     return (
 

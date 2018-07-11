@@ -1,6 +1,7 @@
 import React from "react";
 import { Menu, Dropdown, Icon ,Avatar} from 'antd';
 import { Link } from 'react-router-dom';
+import eventProxy from 'react-eventproxy';
 
 class TopBar extends React.Component {
     onMenuClick=({key}) => {
@@ -27,16 +28,22 @@ class TopBar extends React.Component {
         userName:sessionStorage.getItem("userName"),
     }
     handleClick = (e) => {
-
-        console.log('click ', e.key);
-        this.setState({
-            current: e.key,
-        });
+        this.setState({current: e.key});
     }
     componentWillMount() {
         let path = window.location.pathname.replace('/', '') || 'home';
         this.setState({ current: path });
     }
+    componentDidMount(){
+        let $this=this;
+        eventProxy.on('login', 
+          () => { 
+            $this.state.isLogin = sessionStorage.getItem("x-okapi-token") ? true : false;
+            $this.state.userName=sessionStorage.getItem("userName"),
+            $this.forceUpdate(); 
+          }
+        );
+      }
     render() {
         return (
             <div className='header'>

@@ -5,12 +5,14 @@ import SimpleContent from './SimpleContent.jsx';
 import defaultValue from '../config/defalutValue';
 import DeployService from '../service/deployService';
 import { SERVICE_STATUS } from '../config/serviceConfig';
+import eventProxy from 'react-eventproxy';
+
 const { TextArea } = Input;
 class Modules extends Component {
   columns = [
     { title: '序号', key: 'index', render: (t, r, i) => i + 1 },
     { title: '模块名称', dataIndex: 'name', render: (text, record, index) => <a href="javascript:;" onClick={this.showModuleDetails.bind(this, record.id)} >{text}</a> },
-    { title: '模块ID', dataIndex: 'id', },
+    { title: '模块ID', dataIndex: 'id' },
     {
       title: '操作', key: 'action',
       render: (text, record) => (

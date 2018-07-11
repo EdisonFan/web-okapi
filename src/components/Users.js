@@ -8,6 +8,7 @@ import groupsService from '../service/groupsService';
 import { SERVICE_STATUS } from '../config/serviceConfig';
 import loginService from '../service/loginService';
 import permiService from '../service/permissions';
+import eventProxy from 'react-eventproxy';
 const uuidv1 = require('uuid/v1');
 const { TextArea } = Input;
 const FormItem = Form.Item;
@@ -126,20 +127,25 @@ class Users extends Component {
 
 class EditUser extends React.Component {
   state = {
-    userGroups: []
+    userGroups: [{'id':'+add','group':'add'}]
   }
   componentWillMount() {
-    if (this.state.userGroups.length === 0) this.getGroup();
+    if (this.state.userGroups.length === 1) this.getGroup();
   }
-
+  
   render() {
+    const $this=this;
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
+    let cusStyle={
+      "display":this.state.groupState?'none':'block'
+    };
     return (
-      <Form onSubmit={this.handleSubmit}>
+      <div>
+      <Form onSubmit={this.handleSubmit} style={cusStyle}>
         <FormItem {...formItemLayout} label="username">
           {getFieldDecorator('username', {
             rules: [{
@@ -160,6 +166,7 @@ class EditUser extends React.Component {
             <Input placeholder="Please input your password" />
           )}
         </FormItem>
+       
         <FormItem
           {...formItemLayout}
           label="Patron group"
@@ -172,18 +179,32 @@ class EditUser extends React.Component {
           })(
             <Select placeholder="Please select a group" onChange={function (value, option) {
               console.log(value, option);
+             
               return false;
             }}
               onSelect={function (value, option) {
                 console.log('onSelect', value, option);
+                if(value==='+add'){
+                  setTimeout(()=>{
+                    $this.props.form.setFieldsValue({'patronGroup':''});
+                   },10);
+                  //$this.state.groupState=true;
+                  $this.props.form.setFieldsValue({'patronGroup':''});
+                  // $this.state.userGroups.push({id:new Date().getTime(),group:'new'+new Date().getTime()});
+                  $this.state.addGroup=true;
+                  $this.forceUpdate();
+                  
+                }
                 return false;
               }}
+
+              filterOption={false}
             >
 
               {this.state.userGroups.map((v, i) => (
                 <Option key={i} value={v.id} >{v.group}</Option>
 
-              ))}<Option key={'add'} value="" >+ Add </Option>
+              ))}
             </Select>
           )}
         </FormItem>
@@ -201,6 +222,22 @@ class EditUser extends React.Component {
           <Button type="primary" htmlType="submit">Submit</Button>
         </FormItem>
       </Form>
+      <Modal
+          title="添加用户组"
+          visible={this.state.addGroup||false}
+          onCancel={() => this.setState({ addGroup: false })}
+          footer={false}
+          width={300}
+          wrapClassName="vertical-center-modal"
+         
+        >
+          <Input /><p/>
+          <Button type="primary" onClick={()=>{
+            this.state.addGroup=false;
+            this.forceUpdate();
+          }}>确定</Button>
+        </Modal>
+      </div>
     );
   }
 
@@ -216,7 +253,8 @@ class EditUser extends React.Component {
   getGroup = async () => {
     let _r = await groupsService.groups.get();
     if (_r.status === SERVICE_STATUS.ok) {
-      this.setState({ userGroups: _r.data.usergroups });
+      this.state.userGroups.push(..._r.data.usergroups);
+      this.forceUpdate();
     }else{
       message.error(`userGroups:${_r.message}`);
     }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Icon, Input,  Button,  message } from 'antd';
+import eventProxy from 'react-eventproxy';
 import blUsersService from '../service/blUsersService';
 import {SERVICE_STATUS} from '../config/serviceConfig';
 const FormItem = Form.Item;
@@ -66,9 +67,9 @@ class Login extends Component {
     getLogin=async (values)=>{
        let _r= await blUsersService.blUsers_login.post(values.username,values.password,values.x_okapi_tenant);
        if(_r.status===SERVICE_STATUS.ok){
+           eventProxy.trigger('login');
           message.success('登陆成功');
           this.props.history.push('/');
-          
           //TODO 根据返回的权限动态显示主菜单
        }else{
            message.error(_r.message);
