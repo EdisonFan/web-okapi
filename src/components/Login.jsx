@@ -68,6 +68,7 @@ class Login extends Component {
        if(_r.status===SERVICE_STATUS.ok){
           message.success('登陆成功');
           this.props.history.push('/');
+          
           //TODO 根据返回的权限动态显示主菜单
        }else{
            message.error(_r.message);

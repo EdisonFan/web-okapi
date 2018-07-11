@@ -4,11 +4,7 @@ import { SERVICE_MESSAGE, SERVICE_STATUS } from '../config/serviceConfig.js';
 class DeployService {
     static async getOne(service_id,instance_id) {
         try {
-            let _r = await axios.get(+ `/_/discovery/modules/${service_id}/${instance_id}`, {
-                validateStatus: function (status) {
-                    return status >= 200 && status < 500;
-                }
-            });
+            let _r = await axios.get(`/_/discovery/modules/${service_id}/${instance_id}`);
             return _r.data;
         } catch (error) {
             return error.response.data;

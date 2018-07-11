@@ -11,8 +11,6 @@ class Header extends React.Component {
     isLogin:sessionStorage.getItem("x-okapi-token")?true:false
   }
   handleClick = (e) => {
-    
-    console.log('click ', e.key);
     this.setState({
       current: e.key,
     });

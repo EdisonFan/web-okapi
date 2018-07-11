@@ -1,24 +1,33 @@
-const queryString = require('query-string');
-let parsed={}
-parsed.foo = undefined;
-parsed.ilike = 'pizza';
- 
-const stringified = queryString.stringify(parsed);
-
-class A {
-    constructor() {
-        this.x = 1;
-        this.mm={
-            f:this.cc()
-        };
+const axios = require('axios');
+let instance = axios.create({
+    baseURL: 'http://www.baidu.com8',
+    validateStatus: function (status) {
+        return status < 300;
     }
-    
+});
 
-    cc(){
-        console.log(2);
+instance.interceptors.response.use(
+    res => {
+       
+        return res;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
+
+
+
+
+var start = async function () {
+    try {
+        console.log('start');
+        await instance.get('xx'); // 这里得到了一个返回错误
         
-    } 
-}
-let a=new A();
-a.mm.f();
-
+        // 所以以下代码不会被执行了
+        console.log('end');
+    } catch (err) {
+        console.log(err); // 这里捕捉到错误 `error`
+    }
+};
+start();

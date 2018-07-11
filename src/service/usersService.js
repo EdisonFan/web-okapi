@@ -8,23 +8,27 @@ class UsersService {
     static async getList(limit = 100, query) {
         let queryObj = { query, limit };
         let queryStr = queryString.stringify(queryObj);
-        try {
-            let _r = await axios.get('/users?' + queryStr);
-            switch (_r.status) {
-                case 200:   //success
-                    return { message: SERVICE_MESSAGE.success, status: SERVICE_STATUS.ok, data: _r.data.users };
-                case 400:
-                    return { message: _r.data, status: SERVICE_STATUS.error };
-                case 403:
-                    return { message: _r.data, status: SERVICE_STATUS.error };
-                case 500:   //Internal server error
-                    return { message: _r.data, status: SERVICE_STATUS.error };
-                default:
-                    return { message: SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error, data: _r.data };
-            }
-        } catch (error) {
-            return { message: SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error, data: error };
-        }
+        return axios.get('/users?' + queryStr)
+            .then(
+                (_r) => {
+                    switch (_r.status) {
+                        case 200:   //success
+                            return { message: SERVICE_MESSAGE.success, status: SERVICE_STATUS.ok, data: _r.data.users };
+                        case 400:
+                            return { message: _r.data, status: SERVICE_STATUS.error };
+                        case 403:
+                            return { message: _r.data, status: SERVICE_STATUS.error };
+                        case 500:   //Internal server error
+                            return { message: _r.data, status: SERVICE_STATUS.error };
+                        default:
+                            return { message: _r.data||SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error, data: _r.data };
+                    }
+                }
+            ).catch(error => {
+                return { message: error.message||SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error, data: error };
+            });
+
+
 
         // `
         // {

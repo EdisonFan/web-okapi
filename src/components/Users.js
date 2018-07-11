@@ -36,7 +36,7 @@ class Users extends Component {
   state = {
     data: [],
     loadState: true,
-    AddModalVisible: false,
+    AddUserVisible: false,
     bindModulesVisible: false,
     userId: '',
     modulesData: [],
@@ -88,7 +88,7 @@ class Users extends Component {
       <div>
         <div style={{ margin: 10, textAlign: 'right' }}>
           <Search enterButton placeholder="用户名" onPressEnter={e=>this.getData(e.target.value)} onSearch={e => this.getData(e)}style={{ width: 200, marginRight: 8 }}/>
-          <Button type="primary" onClick={() => { this.setState({ AddModalVisible: true }); }} icon='file-add' style={{width:50}} />
+          <Button type="primary" onClick={() => { this.setState({ AddUserVisible: true }); }} icon='file-add' style={{width:50}} />
         </div>
         <Modal
           title="详细信息"
@@ -100,11 +100,11 @@ class Users extends Component {
         </Modal>
         <Modal
           title="添加"
-          visible={this.state.AddModalVisible}
-          onCancel={() => this.setState({ AddModalVisible: false })}
+          visible={this.state.AddUserVisible}
+          onCancel={() => this.setState({ AddUserVisible: false })}
           footer={false}
         >
-          <WrappedEditUser />
+          <WrappedEditUser saveSuccessFn={()=>{this.setState({AddUserVisible:false});this.getData();}} />
         </Modal>
         <Modal
           title="权限"
@@ -257,6 +257,7 @@ class EditUser extends React.Component {
         let _p = await permiService.perms_user.post(params);
         if (_p.status === SERVICE_STATUS.ok) {
           message.info('创建成功');
+          this.props.saveSuccessFn();
         }
       }
     }
