@@ -18,8 +18,28 @@ const groupsService = {
             return _r;
         },
         //Create a group (need token & tenant)
-        post: async (group, desc) => {
-
+        post: async (group) => {
+            return axios.post(`/groups`,{group})
+                    .then(_r=>{
+                        switch (_r.status) {
+                            case 201:   //success
+                                return { message: SERVICE_MESSAGE.success, status: SERVICE_STATUS.ok, data: _r.data };
+                            case 401:
+                                return { message: _r.data, status: SERVICE_STATUS.error };
+                            case 403:
+                                return { message: _r.data, status: SERVICE_STATUS.error };
+                            case 422:
+                                return { message: _r.data.errors[0].message, status: SERVICE_STATUS.error };
+                            case 500:   //Internal server error
+                                return { message: _r.data, status: SERVICE_STATUS.error };
+                            default:
+                                return { message: _r.data||SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error, data: _r.data };
+                        }
+                    })
+                    .catch(error => {
+                        return { message: error.message||SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error, data: error };
+                    });
+            
         }
     },
     //Entity representing a group

@@ -104,6 +104,8 @@ class UsersService {
                     return { message: SERVICE_MESSAGE.success, status: SERVICE_STATUS.ok };
                 case 400:
                     return { message: _r.data, status: SERVICE_STATUS.error };
+                case 422:
+                    return { message: _r.data.errors[0].message, status: SERVICE_STATUS.error };
                 default:
                     return { message: SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error, data: _r.data };
 

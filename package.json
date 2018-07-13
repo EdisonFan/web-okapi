@@ -1,15 +1,11 @@
 {
-  "name": "a-simple-react-router-v4-tutorial",
-  "description": "https://medium.com/@pshrmn/a-simple-react-router-v4-tutorial-7f23ff27adf",
-  "version": "0.0.13",
+  "name": "okapi-manage",
+  "description": "okapi-manage",
+  "version": "0.0.1",
   "dependencies": {
     "antd": "3.6.4",
     "axios": "^0.18.0",
-    "koa": "^2.5.1",
-    "koa-body": "^4.0.4",
-    "koa-bodyparser": "^4.2.1",
-    "koa2-cors": "^2.0.5",
-    "query-string": "^6.1.0",
+    "query-string": "^4.3.4",
     "raml-1-parser": "^1.1.44",
     "react": "15.5.3",
     "react-dom": "15.5.3",
@@ -18,7 +14,11 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "react-scripts": "1.0.0"
+    "koa": "^2.5.1",
+    "koa-body": "^4.0.4",
+    "koa-bodyparser": "^4.2.1",
+    "koa2-cors": "^2.0.5",
+    "react-scripts": "^1.1.4"
   },
   "scripts": {
     "start": "react-scripts start",

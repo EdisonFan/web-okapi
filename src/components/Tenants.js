@@ -121,7 +121,7 @@ class Tenants extends Component {
 
     return (
       <div>
-        <div style={{ margin: 10, textAlign: 'right' }}>
+        <div style={{ marginBottom: 10, textAlign: 'right' }}>
           <Search
             enterButton
             placeholder="租客名称"

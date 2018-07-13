@@ -12,11 +12,29 @@ class DeployService {
     }
 
     static async getHealth() {
-        let _mdata = await axios.get( '/_/discovery/health');
-        _mdata.data.forEach((item, index) => {
-            item.key = index;
+        return await axios.get( '/_/discovery/health')
+        .then(
+            (_r) => {
+                switch (_r.status) {
+                    case 200:   //success
+                        _r.data.forEach((item, index) => {
+                            item.key = index;
+                        });
+                        return { message: SERVICE_MESSAGE.success, status: SERVICE_STATUS.ok, data: _r.data };
+                    case 400:
+                        return { message: _r.data, status: SERVICE_STATUS.error };
+                    case 403:
+                        return { message: _r.data, status: SERVICE_STATUS.error };
+                    case 500:   //Internal server error
+                        return { message: _r.data, status: SERVICE_STATUS.error };
+                    default:
+                        return { message: _r.data||SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error, data: _r.data };
+                }
+            }
+        ).catch(error => {
+            return { message: error.message||SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error, data: error };
         });
-        return _mdata.data;
+        
     }
     static async getHealthOne(srvid) {
         try {

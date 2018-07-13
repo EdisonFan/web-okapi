@@ -15,7 +15,20 @@ class Header extends React.Component {
     });
   }
   componentWillMount() {
-    let path = window.location.pathname.replace('/', '') || 'home';
+
+    let path = '';
+    if(window.location.hash.includes('home')){
+      path='home';
+    }
+    if(window.location.hash.includes('deploy')){
+      path='deploy';
+    }
+    if(window.location.hash.includes('tenants')){
+      path='tenants';
+    }
+    if(window.location.hash.includes('users')){
+      path='users';
+    }
     this.setState({ current: path });
     
   }
@@ -30,7 +43,7 @@ class Header extends React.Component {
         theme="dark"
       >
         <Menu.Item key="home" >
-          <Link to="/"> <Icon type="bars" /><span className="nav-text">模块列表</span></Link>
+          <Link to="/home"> <Icon type="bars" /><span className="nav-text">模块列表</span></Link>
         </Menu.Item>
         <Menu.Item key="deploy" >
           <Link to='/deploy'> <Icon type="appstore" />部署列表</Link>

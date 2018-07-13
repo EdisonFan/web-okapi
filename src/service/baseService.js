@@ -1,6 +1,6 @@
 import Axios from 'axios';
 import host from '../appConfig.js';
-
+let okapiHost=sessionStorage.getItem('host');
 let instance = Axios.create({
     baseURL: host,
     validateStatus: status => status < 600,
@@ -14,6 +14,7 @@ instance.interceptors.request.use(function (config) {
         config.headers['x-okapi-token'] = sessionStorage.getItem("x-okapi-token");
     }
     config.headers['Content-Type'] = 'application/json';
+    config.headers['okapiHost'] = okapiHost;
     console.log(config.headers);
 
     return config;

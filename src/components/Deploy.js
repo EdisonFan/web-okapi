@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Table,  Tooltip, Button,  Modal,  message ,Badge,Input,Popconfirm } from 'antd';
 import deployService from '../service/deployService';
 import SimpleContent from './SimpleContent';
+import { SERVICE_STATUS } from '../config/serviceConfig';
 const uuidv1 = require('uuid/v1');
 const { TextArea } = Input;
 
@@ -62,7 +63,12 @@ class Deploy extends Component {
   async getModulesData() {
     this.setState({ loadState: true });
     let _r = await deployService.getHealth();
-    this.setState({ data: _r,dataSearch:_r, loadState: false });
+    if(_r.status===SERVICE_STATUS.ok){
+      this.setState({ data: _r.data,dataSearch:_r.data, loadState: false });
+    }else{
+      this.setState({loadState:false});
+      message.info(_r.message);
+    }
   }
   delModule=async (mid,instId)=>{
     let r = await deployService.del(mid,instId);
@@ -78,8 +84,8 @@ class Deploy extends Component {
     return (
       <div>
         
-        <div style={{ margin: 10, textAlign: 'right' }}>
-          <Search enterButton placeholder="输入模块id" onPressEnter={e=>this.search(e.target.value)} onSearch={e => this.search(e)}style={{ width: 200, marginRight: 8 }}/>
+        <div style={{ marginBottom: 10, textAlign: 'right' }}>
+          <Search enterButton placeholder="模块id" onPressEnter={e=>this.search(e.target.value)} onSearch={e => this.search(e)}style={{ width: 200, marginRight: 8 }}/>
           <Button type="primary" onClick={() => { this.setState({ AddModalVisible: true }); }} icon='file-add' style={{width:50}} />
         </div>
         <Table pagination={false} loading={this.state.loadState} columns={this.columns} dataSource={this.state.data} />

@@ -3,19 +3,19 @@ const axios = require('axios');
 const cors = require('koa2-cors');
 const bodyParser = require('koa-bodyparser');
 const app = new Koa();
-const okapiHost = '222.29.81.101';
-const okapiPort = '9130';
+
 app.use(bodyParser());
 
 const main = async (ctx) => {
     try {
         var instance = axios.create();
         let headers = ctx.headers;
+        let okapiHost=headers.okapihost;
         delete headers.origin;
         delete headers.referer;
         let r = await instance({
             method: ctx.method,
-            url: `http://${okapiHost}:${okapiPort}${ctx.originalUrl}`,
+            url: `${okapiHost}${ctx.originalUrl}`,
             validateStatus: function (status) {
                 return status < 600;
             },
@@ -39,7 +39,7 @@ app.use(cors({
     maxAge: 10,
     credentials: true,
     allowMethods: ['POST', 'DELETE', 'HEAD', 'PUT'],
-    allowHeaders: ['Content-Type', 'Authorization', 'Accept', 'x-okapi-tenant', 'x-okapi-token'],
+    allowHeaders: ['Content-Type', 'Authorization', 'Accept', 'okapiHost','x-okapi-tenant', 'x-okapi-token'],
 }));
 app.use(main).listen(4000);
 console.log('proxy-okapi is starting at port 4000');

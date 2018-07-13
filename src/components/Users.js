@@ -56,13 +56,13 @@ class Users extends Component {
 
     let query = undefined;
     if (value) {
-      let userName =value;
+      let userName = value;
       query = `(username==*${userName}*)`;
     }
     let _r = await UsersService.getList(30, query);
-    if(_r.status===SERVICE_STATUS.ok){
+    if (_r.status === SERVICE_STATUS.ok) {
       this.setState({ data: _r.data, loadState: false });
-    }else{
+    } else {
       message.error(_r.message);
       this.setState({ loadState: false });
     }
@@ -87,9 +87,9 @@ class Users extends Component {
     const Search = Input.Search;
     return (
       <div>
-        <div style={{ margin: 10, textAlign: 'right' }}>
-          <Search enterButton placeholder="用户名" onPressEnter={e=>this.getData(e.target.value)} onSearch={e => this.getData(e)}style={{ width: 200, marginRight: 8 }}/>
-          <Button type="primary" onClick={() => { this.setState({ AddUserVisible: true }); }} icon='file-add' style={{width:50}} />
+        <div style={{ marginBottom: 10, textAlign: 'right' }}>
+          <Search enterButton placeholder="用户名" onPressEnter={e => this.getData(e.target.value)} onSearch={e => this.getData(e)} style={{ width: 200, marginRight: 8 }} />
+          <Button type="primary" onClick={() => { this.setState({ AddUserVisible: true }); }} icon='file-add' style={{ width: 50 }} />
         </div>
         <Modal
           title="详细信息"
@@ -105,7 +105,7 @@ class Users extends Component {
           onCancel={() => this.setState({ AddUserVisible: false })}
           footer={false}
         >
-          <WrappedEditUser saveSuccessFn={()=>{this.setState({AddUserVisible:false});this.getData();}} />
+          <WrappedEditUser saveSuccessFn={() => { this.setState({ AddUserVisible: false }); this.getData(); }} />
         </Modal>
         <Modal
           title="权限"
@@ -114,9 +114,9 @@ class Users extends Component {
           footer={false}
           width={600}
         >
-          <Permissions userId={this.state.userId} />
+          <Permissions userId={this.state.userId} SuccessFn={()=>this.setState({ PermissionsVisible: false })}/>
         </Modal>
-        <Table rowKey={record=>record.id} pagination={false} loading={this.state.loadState} columns={this.columns} dataSource={this.state.data} />
+        <Table rowKey={record => record.id} pagination={false} loading={this.state.loadState} columns={this.columns} dataSource={this.state.data} />
       </div>
     );
   }
@@ -127,115 +127,115 @@ class Users extends Component {
 
 class EditUser extends React.Component {
   state = {
-    userGroups: [{'id':'+add','group':'add'}]
+    userGroups: [{ 'id': '+add', 'group': 'add' }],
+    submitBtnStatus:true
   }
   componentWillMount() {
     if (this.state.userGroups.length === 1) this.getGroup();
   }
-  
+
   render() {
-    const $this=this;
+    const $this = this;
     const { getFieldDecorator } = this.props.form;
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
     };
-    let cusStyle={
-      "display":this.state.groupState?'none':'block'
+    let cusStyle = {
+      "display": this.state.groupState ? 'none' : 'block'
     };
     return (
       <div>
-      <Form onSubmit={this.handleSubmit} style={cusStyle}>
-        <FormItem {...formItemLayout} label="username">
-          {getFieldDecorator('username', {
-            rules: [{
-              required: true,
-              message: 'Please input your name',
-            }],
-          })(
-            <Input placeholder="Please input your name" />
-          )}
-        </FormItem>
-        <FormItem {...formItemLayout} label="password">
-          {getFieldDecorator('password', {
-            rules: [{
-              required: true,
-              message: 'Please input your password',
-            }],
-          })(
-            <Input placeholder="Please input your password" />
-          )}
-        </FormItem>
-       
-        <FormItem
-          {...formItemLayout}
-          label="Patron group"
-          hasFeedback
-        >
-          {getFieldDecorator('patronGroup', {
-            rules: [
-              { required: true, message: 'Please select your group!' },
-            ],
-          })(
-            <Select placeholder="Please select a group" onChange={function (value, option) {
-              console.log(value, option);
-             
-              return false;
-            }}
-              onSelect={function (value, option) {
-                console.log('onSelect', value, option);
-                if(value==='+add'){
-                  setTimeout(()=>{
-                    $this.props.form.setFieldsValue({'patronGroup':''});
-                   },10);
-                  //$this.state.groupState=true;
-                  $this.props.form.setFieldsValue({'patronGroup':''});
-                  // $this.state.userGroups.push({id:new Date().getTime(),group:'new'+new Date().getTime()});
-                  $this.state.addGroup=true;
-                  $this.forceUpdate();
-                  
-                }
+        <Form onSubmit={this.handleSubmit} style={cusStyle}>
+          <FormItem {...formItemLayout} label="username">
+            {getFieldDecorator('username', {
+              rules: [{
+                required: true,
+                message: 'Please input your name',
+              }],
+            })(
+              <Input placeholder="Please input your name" />
+            )}
+          </FormItem>
+          <FormItem {...formItemLayout} label="password">
+            {getFieldDecorator('password', {
+              rules: [{
+                required: true,
+                message: 'Please input your password',
+              }],
+            })(
+              <Input placeholder="Please input your password" />
+            )}
+          </FormItem>
+
+          <FormItem
+            {...formItemLayout}
+            label="Patron group"
+            hasFeedback
+          >
+            {getFieldDecorator('patronGroup', {
+              rules: [
+                { required: true, message: 'Please select your group!' },
+              ],
+            })(
+              <Select placeholder="Please select a group" onChange={function (value, option) {
+                console.log(value, option);
+
                 return false;
               }}
+                onSelect={function (value, option) {
+                  console.log('onSelect', value, option);
+                  if (value === '+add') {
+                    setTimeout(() => {
+                      $this.props.form.setFieldsValue({ 'patronGroup': '' });
+                    }, 10);
+                    //$this.state.groupState=true;
+                    $this.props.form.setFieldsValue({ 'patronGroup': '' });
+                    // $this.state.userGroups.push({id:new Date().getTime(),group:'new'+new Date().getTime()});
+                    $this.state.addGroup = true;
+                    $this.forceUpdate();
 
-              filterOption={false}
-            >
+                  }
+                  return false;
+                }}
 
-              {this.state.userGroups.map((v, i) => (
-                <Option key={i} value={v.id} >{v.group}</Option>
+                filterOption={false}
+              >
 
-              ))}
-            </Select>
-          )}
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="Status"
-        >
-          {getFieldDecorator('active', { valuePropName: 'checked' })(
-            <Switch />
-          )}
-        </FormItem>
-        <FormItem
-          wrapperCol={{ span: 12, offset: 6 }}
-        >
-          <Button type="primary" htmlType="submit">Submit</Button>
-        </FormItem>
-      </Form>
-      <Modal
+                {this.state.userGroups.map((v, i) => (
+                  <Option key={i} value={v.id} >{v.group}</Option>
+
+                ))}
+              </Select>
+            )}
+          </FormItem>
+          <FormItem
+            {...formItemLayout}
+            label="Status"
+          >
+            {getFieldDecorator('active', { valuePropName: 'checked' })(
+              <Switch />
+            )}
+          </FormItem>
+          <FormItem
+            wrapperCol={{ span: 12, offset: 6 }}
+          >
+            <Button type="primary" htmlType="submit" loading={!this.state.submitBtnStatus}>保存</Button>
+          </FormItem>
+        </Form>
+        <Modal
           title="添加用户组"
-          visible={this.state.addGroup||false}
+          visible={this.state.addGroup || false}
           onCancel={() => this.setState({ addGroup: false })}
           footer={false}
           width={300}
           wrapClassName="vertical-center-modal"
-         
+
         >
-          <Input /><p/>
-          <Button type="primary" onClick={()=>{
-            this.state.addGroup=false;
-            this.forceUpdate();
-          }}>确定</Button>
+            <GroupEdit SuccessFn={()=>{
+              this.setState({ addGroup: false });
+              this.getGroup();
+          }} />
         </Modal>
       </div>
     );
@@ -255,7 +255,7 @@ class EditUser extends React.Component {
     if (_r.status === SERVICE_STATUS.ok) {
       this.state.userGroups.push(..._r.data.usergroups);
       this.forceUpdate();
-    }else{
+    } else {
       message.error(`userGroups:${_r.message}`);
     }
   }
@@ -274,6 +274,8 @@ class EditUser extends React.Component {
       "patronGroup":"${values.patronGroup}"
    }
     `;
+    this.setState({submitBtnStatus:false});
+
     let _r = await UsersService.save(params);
     if (_r.status === SERVICE_STATUS.ok) {
       params = `
@@ -295,9 +297,13 @@ class EditUser extends React.Component {
         let _p = await permiService.perms_user.post(params);
         if (_p.status === SERVICE_STATUS.ok) {
           message.info('创建成功');
+          this.setState({submitBtnStatus:true});
           this.props.saveSuccessFn();
         }
       }
+    }else{
+      message.info(_r.message);
+      this.setState({submitBtnStatus:true});
     }
   }
 }
@@ -344,18 +350,16 @@ class Permissions extends React.Component {
   }
 
   commit = async () => {
-    // this.state.loading=true;
-    // this.forceUpdate();
-    console.log('save');
     let params = {
       "id": this.state.permissionId,
       "userId": this.state.userId,
       "permissions": this.state.targetKeys
     };
-    let _r = permiService.perms_users_id.put(this.state.permissionId, JSON.stringify(params));
+    let _r = await permiService.perms_users_id.put(this.state.permissionId, JSON.stringify(params));
     if (_r.status === SERVICE_STATUS.ok) {
-      console.log(_r);
-
+      this.props.SuccessFn();
+    }else{
+      message.info(_r.message);
     }
   }
   getAllList = async () => {
@@ -385,4 +389,37 @@ class Permissions extends React.Component {
   }
 }
 
+class GroupEditForm extends React.Component {
+  state={}
+  render() {
+    const { getFieldDecorator } = this.props.form;
+    return (
+      <Form onSubmit={this.handleSubmit} className="">
+        <FormItem>
+          {getFieldDecorator('group', {rules: [{ required: true }]})(
+            <Input placeholder='组名' />
+          )}
+        </FormItem>
+        <p />
+        <Button type="primary" htmlType="submit">确定</Button>
+      </Form>
+    );
+  }
+  handleSubmit=(e)=>{
+    e.preventDefault();
+    this.props.form.validateFields(async(err, values) => {
+      if (!err) {
+        let _r=await groupsService.groups.post(values.group);
+        if(_r.status===SERVICE_STATUS.ok){
+          message.info(_r.message);
+          this.props.SuccessFn();
+        }else{
+          message.info(_r.message);
+        }
+        
+      }
+    });
+  }
+}
+const GroupEdit = Form.create()(GroupEditForm);
 export default Users;

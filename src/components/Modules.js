@@ -119,7 +119,7 @@ class Modules extends Component {
   async getModulesData() {
     let _r = await ModulesService.getList();
     if(_r.status===SERVICE_STATUS.ok){
-      this.setState({ data: _r.data, dataSearch: _r, loadState: false });
+      this.setState({ data: _r.data, dataSearch: _r.data, loadState: false });
     }else{
       this.setState({ loadState: false });
       message.info(_r.message);
