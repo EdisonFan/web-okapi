@@ -5,6 +5,7 @@ const Users = {
         id:'编号',
         type:"类型",
         action:"操作",
+        delete:"删除",
     },
     add:{
         username:'用户名',
