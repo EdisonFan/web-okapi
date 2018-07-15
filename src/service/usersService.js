@@ -147,5 +147,7 @@ class UsersService {
             return error;
         }
     }
+    
+    
 }
 export default UsersService;

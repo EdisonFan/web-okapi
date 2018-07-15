@@ -9,6 +9,7 @@ import { SERVICE_STATUS } from '../config/serviceConfig';
 import loginService from '../service/loginService';
 import permiService from '../service/permissions';
 import eventProxy from 'react-eventproxy';
+import lang from './../config/cn';
 const uuidv1 = require('uuid/v1');
 const { TextArea } = Input;
 const FormItem = Form.Item;
@@ -17,16 +18,16 @@ const Option = Select.Option;
 
 class Users extends Component {
   columns = [
-    { title: '序号', dataIndex: 'index', key: 'index', render: (text, record, index) => index + 1 },
-    { title: '名称', dataIndex: 'username', key: 'username', render: (text, record) => <a href="javascript:;" onClick={this.getDeatails.bind(this, record.id)}>{text}</a> },
-    { title: 'ID', dataIndex: 'id', key: 'id', },
-    { title: 'type', dataIndex: 'type', key: 'type' },
+    { title: lang.Users.list.num, dataIndex: 'index', key: 'index', render: (text, record, index) => index + 1 },
+    { title: lang.Users.list.name, dataIndex: 'username', key: 'username', render: (text, record) => <a href="javascript:;" onClick={this.getDeatails.bind(this, record.id)}>{text}</a> },
+    { title: lang.Users.list.id, dataIndex: 'id', key: 'id', },
+    { title: lang.Users.list.type, dataIndex: 'type', key: 'type' },
     {
-      title: '操作', key: 'action',
+      title: lang.Users.list.action, key: 'action',
       render: (text, record) => (
         <span>
           <Popconfirm title='确定删除吗？' onConfirm={this.del.bind(this, record.id)}>
-            <a href="javascript:;" >删除</a>
+            <a href="javascript:;" >{lang.Users.list.delete}</a>
           </Popconfirm>
           <Divider type="vertical" />
           <a href="javascript:;" onClick={() => { this.showPermissions(record.id); }}>绑定权限</a>
@@ -147,7 +148,7 @@ class EditUser extends React.Component {
     return (
       <div>
         <Form onSubmit={this.handleSubmit} style={cusStyle}>
-          <FormItem {...formItemLayout} label="username">
+          <FormItem {...formItemLayout} label={lang.Users.add.username}>
             {getFieldDecorator('username', {
               rules: [{
                 required: true,
@@ -157,7 +158,7 @@ class EditUser extends React.Component {
               <Input placeholder="Please input your name" />
             )}
           </FormItem>
-          <FormItem {...formItemLayout} label="password">
+          <FormItem {...formItemLayout} label={lang.Users.add.password}>
             {getFieldDecorator('password', {
               rules: [{
                 required: true,
@@ -168,11 +169,7 @@ class EditUser extends React.Component {
             )}
           </FormItem>
 
-          <FormItem
-            {...formItemLayout}
-            label="Patron group"
-            hasFeedback
-          >
+          <FormItem {...formItemLayout} label={lang.Users.add.group}>
             {getFieldDecorator('patronGroup', {
               rules: [
                 { required: true, message: 'Please select your group!' },
@@ -209,10 +206,7 @@ class EditUser extends React.Component {
               </Select>
             )}
           </FormItem>
-          <FormItem
-            {...formItemLayout}
-            label="Status"
-          >
+          <FormItem {...formItemLayout} label={lang.Users.add.Status} >
             {getFieldDecorator('active', { valuePropName: 'checked' })(
               <Switch />
             )}
