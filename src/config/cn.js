@@ -14,5 +14,5 @@ const Users = {
         Status:'状态',
     }
 };
-const cn={Users};
+const cn={Users}; 
 export default cn;

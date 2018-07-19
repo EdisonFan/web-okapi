@@ -42,4 +42,4 @@ app.use(cors({
     allowHeaders: ['Content-Type', 'Authorization', 'Accept', 'okapiHost','x-okapi-tenant', 'x-okapi-token'],
 }));
 app.use(main).listen(4000);
-console.log('proxy-okapi is starting at port 4000');
+console.log('proxy-okapi is starting at port 4000'); 
