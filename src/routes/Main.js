@@ -11,6 +11,8 @@ import Index from '../components/Index';
 // and /schedule routes will match any pathname that starts
 // with /roster or /schedule. The / route will only match
 // when the pathname is exactly the string "/"
+
+
 const Main = () => (
   <main>
     <Switch>

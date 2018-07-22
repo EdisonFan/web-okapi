@@ -5,9 +5,12 @@ import SimpleContent from './SimpleContent.jsx';
 import defaultValue from '../config/defalutValue';
 import DeployService from '../service/deployService';
 import { SERVICE_STATUS } from '../config/serviceConfig';
-import eventProxy from 'react-eventproxy';
+import { observable, action } from "mobx";
+import { observer,inject } from "mobx-react";
 
 const { TextArea } = Input;
+@inject("AppStateStore")
+@observer
 class Modules extends Component {
   columns = [
     { title: '序号', key: 'index', render: (t, r, i) => i + 1 },
@@ -50,13 +53,17 @@ class Modules extends Component {
   componentWillMount() {
     this.getModulesData();
   }
+  componentWillUpdate(props){
+    console.log(props);
+  }
   // filtered is [12, 130, 44]
   render() {
     const Search = Input.Search;
+    const {data,loadState}=this.props.AppStateStore.appState;
     return (
       <div>
         <div style={{ margin: "10px 0", textAlign: 'right' }}>
-          <Search enterButton placeholder="输入模块id" style={{ width: 200, marginRight: 8 }}
+          <Search enterButton placeholder={'输入模块id'} style={{ width: 200, marginRight: 8 }}
             onSearch={e => this.search(e)}
             onPressEnter={e => this.search(e.target.value)}
           />
@@ -106,7 +113,9 @@ class Modules extends Component {
             defaultValue={this.state.deployDefaultValte(this.state.ModuleId)}
             clearValue={!this.state.AddDeployModalVisible} onClick={this.addDeployModule} />
         </Modal>
-        <Table pagination={false} loading={this.state.loadState} columns={this.columns} dataSource={this.state.data} />
+        <Table pagination={false} loading={loadState} columns={this.columns}
+          dataSource={data} 
+         />
       </div>
     );
   }
@@ -117,13 +126,14 @@ class Modules extends Component {
     this.setState({ dataDetails: this.formatJson(JSON.stringify(_r)), loadState: false });
   }
   async getModulesData() {
-    let _r = await ModulesService.getList();
-    if(_r.status===SERVICE_STATUS.ok){
-      this.setState({ data: _r.data, dataSearch: _r.data, loadState: false });
-    }else{
-      this.setState({ loadState: false });
-      message.info(_r.message);
-    }
+    this.props.AppStateStore.appState.getList();
+    // let _r = await ModulesService.getList();
+    // if(_r.status===SERVICE_STATUS.ok){
+    //   this.setState({ data: _r.data, dataSearch: _r.data, loadState: false });
+    // }else{
+    //   this.setState({ loadState: false });
+    //   message.info(_r.message);
+    // }
   }
   delModule = async (id) => {
     let r = await ModulesService.del(id);
