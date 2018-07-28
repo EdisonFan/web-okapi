@@ -36,7 +36,7 @@ class ModulesService {
             switch (_r.status) {
                 case 201:   //success
                     return {message:SERVICE_MESSAGE.success,status:SERVICE_STATUS.ok,data:_r.data};
-                case 404:   //Validation errors
+                case 400:   //Validation errors
                     return {message:_r.data,status:SERVICE_STATUS.error};
                 case 500:   //Internal server error
                     return {message:_r.data,status:SERVICE_STATUS.error};
@@ -62,8 +62,17 @@ class ModulesService {
 
     static async deploySave(params) {
         try {
-            let r= await axios.post('/_/discovery/modules',params);
-            return r.statusText;
+            let _r= await axios.post('/_/discovery/modules',params);
+            switch (_r.status) {
+                case 201:   //success
+                    return {message:SERVICE_MESSAGE.success,status:SERVICE_STATUS.ok,data:_r.data};
+                case 400:   //Validation errors
+                    return {message:_r.data,status:SERVICE_STATUS.error};
+                case 500:   //Internal server error
+                    return {message:_r.data,status:SERVICE_STATUS.error};
+                default:
+                    return {message:SERVICE_MESSAGE.unknown_err,status:SERVICE_STATUS.error,data:_r.data};
+            }
             
         } catch (error) {
             return error.response.data;

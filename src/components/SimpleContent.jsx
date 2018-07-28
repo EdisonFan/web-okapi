@@ -6,11 +6,8 @@ import React, { Component } from 'react';
 import { Button, Input, Form } from 'antd';
 const FormItem = Form.Item;
 const { TextArea } = Input;
-class simpleContentComp extends Component {
 
-  state = {
-    contentValue: this.props.defaultValue
-  }
+class simpleContentComp extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.clearValue) {
@@ -33,7 +30,7 @@ class simpleContentComp extends Component {
         <FormItem >
           {getFieldDecorator('parms', {
             rules: [{ required: true, message: 'Please input parms!' }],
-            initialValue: this.state.contentValue
+            initialValue: this.props.defaultValue
           })(
             <TextArea rows={5} placeholder="参数" />
           )}
