@@ -4,7 +4,7 @@ import SimpleContent from './SimpleContent.jsx';
 import { observer, inject } from "mobx-react";
 const { TextArea } = Input;
 
-@inject("appState")
+@inject("AppStateStore")
 @observer
 class Modules extends Component {
   columns = [
