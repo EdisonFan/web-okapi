@@ -81,8 +81,9 @@ module.exports = function(proxy, allowedHost) {
     },
     public: allowedHost,
     proxy: {
-      '/proxy':{
-        target: "http://localhost:4000",
+      '/proxy/**':{
+        target: "http://127.0.0.1:4000",
+        changeOrigin: true,
         pathRewrite: {"^/proxy" : ""}
       }
     },

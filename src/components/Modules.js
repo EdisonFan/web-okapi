@@ -9,15 +9,15 @@ const { TextArea } = Input;
 class Modules extends Component {
   columns = [
     { title: '序号', key: 'index', render: (t, r, i) => i + 1 },
-    { title: '模块名称', dataIndex: 'name', render: (text, record, index) => <a onClick={()=>this.props.AppStateStore.appState.getDetails(record.id)} >{text}</a> },
+    { title: '模块名称', dataIndex: 'name', render: (text, record, index) => <a onClick={()=>this.props.AppStateStore.ModuleState.getDetails(record.id)} >{text}</a> },
     { title: '模块ID', dataIndex: 'id' },
     {
       title: '操作', key: 'action',
       render: (text, record) => (
         <span>
-          <a onClick={() => this.props.AppStateStore.appState.getDepolyHealth(record.id)}>部署</a>
+          <a onClick={() => this.props.AppStateStore.ModuleState.getDepolyHealth(record.id)}>部署</a>
           <Divider type="vertical" />
-          <a onClick={() => this.props.AppStateStore.appState.delModule(record.id)}>删除</a>
+          <a onClick={() => this.props.AppStateStore.ModuleState.delModule(record.id)}>删除</a>
         </span>
       ),
     }];
@@ -30,7 +30,7 @@ class Modules extends Component {
       addDeployModalVisible, toggleAddDeployModal,search,
       deployList, ModuleId, addDeployModule, addModule,
       deployDefaultValue, addDefaultValut
-    } = this.props.AppStateStore.appState;
+    } = this.props.AppStateStore.ModuleState;
     return (
       <div>
         <div style={{ margin: "10px 0", textAlign: 'right' }}>
@@ -90,7 +90,7 @@ class Modules extends Component {
   }
 
   componentWillMount() {
-    this.props.AppStateStore.appState.getList();
+    this.props.AppStateStore.ModuleState.getList();
   }
 
 }

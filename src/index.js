@@ -8,8 +8,8 @@ import { Provider } from "mobx-react";
 import {createStoreMap} from "./store/store";
 render((
   <Provider AppStateStore={createStoreMap()}>
-  <HashRouter>
-    <App />
-  </HashRouter>
+    <HashRouter>
+      <App />
+    </HashRouter>
   </Provider>
 ), document.getElementById('root'));

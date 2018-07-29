@@ -1,13 +1,11 @@
-import AppStateClass from './app-state';
-
-export const AppState = AppStateClass;
-
-export default {
-  AppState,
-};
+import ModuleState from './moduleState';
+import Login from './loginState';
+import DeployState from './deployState';
 
 export const createStoreMap = () => {
   return {
-    appState: new AppState(),
+    ModuleState: new ModuleState(),
+    loginState:new Login(),
+    DeployState:new DeployState(),
   };
 };

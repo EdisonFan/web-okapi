@@ -22,7 +22,9 @@ const main = async (ctx) => {
             headers: headers,
             data: ctx.request.rawBody
         });
-        ctx.response.set({ ...r.headers });
+       // ctx.response.set({ ...r.headers });
+        ctx.response.set({"x-okapi-token":r.headers['x-okapi-token']});
+        ctx.response.set({"x-okapi-tenant":r.headers['x-okapi-tenant']});
         ctx.response.status = r.status;
         ctx.response.body = r.data;
         instance = null;

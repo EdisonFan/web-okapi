@@ -1,69 +1,47 @@
 import React from "react";
-import { Menu, Dropdown, Icon ,Avatar} from 'antd';
+import { Menu, Dropdown, Icon, Avatar } from 'antd';
 import { Link } from 'react-router-dom';
-import eventProxy from 'react-eventproxy';
+import { withRouter } from 'react-router-dom';
+import { observer, inject } from "mobx-react";
 
+@withRouter
+@inject("AppStateStore")
+@observer
 class TopBar extends React.Component {
-    onMenuClick=({key}) => {
-        
-        if (key === 'logout') {
-            sessionStorage.setItem("x-okapi-token",'');
-            sessionStorage.setItem("x-okapi-tenant",'');
-            sessionStorage.setItem("userName",'');
-
-            window.location.href='/login';
-        }
-    };
-    
-    menu = (
-        <Menu onClick={this.onMenuClick}>
-            <Menu.Item key='logout'>
-                <Icon type="logout" />退出登录
-            </Menu.Item>
-        </Menu>
-    );
-    state = {
-        current: 'home',
-        isLogin: sessionStorage.getItem("x-okapi-token") ? true : false,
-        userName:sessionStorage.getItem("userName"),
-    }
-    handleClick = (e) => {
-        this.setState({current: e.key});
-    }
-    componentWillMount() {
-        let path = window.location.pathname.replace('/', '') || 'home';
-        this.setState({ current: path });
-    }
-    componentDidMount(){
-        let $this=this;
-        eventProxy.on('login', 
-          () => { 
-            $this.state.isLogin = sessionStorage.getItem("x-okapi-token") ? true : false;
-            $this.state.userName=sessionStorage.getItem("userName"),
-            $this.forceUpdate(); 
-          }
-        );
-      }
     render() {
+        const{userName,logOut}=this.props.AppStateStore.loginState;
+        const onMenuClick = ({ key }) => {
+            if (key === 'logout') {
+                logOut();
+                this.props.history.push('/login');
+            }
+        };
+    
+       const menu = (
+            <Menu onClick={onMenuClick}>
+                <Menu.Item key='logout'>
+                    <Icon type="logout" />退出登录
+                </Menu.Item>
+            </Menu>
+        );
         return (
             <div className='header'>
-            <div className='right'>
-            { this.state.isLogin ?
-            <Dropdown overlay={this.menu}>
-                <span className="action account" >
-                <Avatar className="avatar" icon="user" />
-                <span >{this.state.userName}</span>
-                </span>
-            </Dropdown>:
-             <Link to="/login"> 
-              <span className="action account" >
-                <Avatar size="small" className="avatar" icon="user" />
-                <span >登陆</span>
-                </span>
-             </Link>
-           
-            }
-            </div>
+                <div className='right'>
+                    {userName ?
+                        <Dropdown overlay={menu}>
+                            <span className="action account" >
+                                <Avatar className="avatar" icon="user" />
+                                <span >{userName}</span>
+                            </span>
+                        </Dropdown> :
+                        <Link to="/login">
+                            <span className="action account" >
+                                <Avatar size="small" className="avatar" icon="user" />
+                                <span >登陆</span>
+                            </span>
+                        </Link>
+                    }
+                </div>
             </div>
 
         );

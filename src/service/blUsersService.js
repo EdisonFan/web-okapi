@@ -25,10 +25,8 @@ class blUsersService {
                 switch (status) {
                     case 201:           //登陆成功
                         if (_r.headers['x-okapi-token']) {
-                            sessionStorage.setItem('x-okapi-token', _r.headers['x-okapi-token']);
-                            sessionStorage.setItem('x-okapi-tenant',_r.headers['x-okapi-tenant']); 
-                            sessionStorage.setItem('userName',username);
-                            return { message: SERVICE_MESSAGE.success, status: SERVICE_STATUS.ok };
+                            let data={token:_r.headers['x-okapi-token'],tenant:_r.headers['x-okapi-tenant'],userName:username};
+                            return { message: SERVICE_MESSAGE.success, status: SERVICE_STATUS.ok,data};
                         }
                         return { message: SERVICE_MESSAGE.login_no_token, status: SERVICE_STATUS.error };
                     case 400:           //租客错误或密码错误

@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-import { Table, Divider, Button, Modal, message, Switch, Icon, Popconfirm, Input } from 'antd';
-import {
-  Form, Select, Transfer
-} from 'antd';
+import { Table, Divider, Button, Modal, message, Switch,  Popconfirm, Input } from 'antd';
+import {Form, Select, Transfer} from 'antd';
 import UsersService from '../service/usersService';
 import groupsService from '../service/groupsService';
 import { SERVICE_STATUS } from '../config/serviceConfig';
 import loginService from '../service/loginService';
 import permiService from '../service/permissions';
-import eventProxy from 'react-eventproxy';
+
 import lang from './../config/cn';
 const uuidv1 = require('uuid/v1');
 const { TextArea } = Input;

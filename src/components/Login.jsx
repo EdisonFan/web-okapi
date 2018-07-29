@@ -1,21 +1,12 @@
 import React, { Component } from 'react';
-import { Form, Icon, Input,  Button,  message } from 'antd';
-import eventProxy from 'react-eventproxy';
-import blUsersService from '../service/blUsersService';
-import {SERVICE_STATUS} from '../config/serviceConfig';
+import { Form, Icon, Input,  Button } from 'antd';
+
+import { observer, inject } from "mobx-react";
 const FormItem = Form.Item;
+
+@inject("AppStateStore")
+@observer
 class Login extends Component {
-
-    state = {
-        data: [],
-        loadState: true,
-        AddModalVisible: false,
-        AddDeployModalVisible: false,
-        ViewModalVisible: false,
-        dataDetails: '',
-    }
-
-
     render() {
         const { getFieldDecorator } = this.props.form;
         return (
@@ -58,23 +49,14 @@ class Login extends Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values);
-                this.getLogin(values);
+                if(this.props.AppStateStore.loginState.loginSystem(values)){
+                    this.props.history.push('/home');
+                }
             }
         });
     }
 
-    getLogin=async (values)=>{
-       let _r= await blUsersService.blUsers_login.post(values.username,values.password,values.x_okapi_tenant);
-       if(_r.status===SERVICE_STATUS.ok){
-           eventProxy.trigger('login');
-          message.success('登陆成功');
-          this.props.history.push('/home');
-          //TODO 根据返回的权限动态显示主菜单
-       }else{
-           message.error(_r.message);
-       }
-    }
+  
 }
 const WrappedLoginForm = Form.create()(Login);
 export default WrappedLoginForm;

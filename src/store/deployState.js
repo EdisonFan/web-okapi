@@ -5,19 +5,20 @@ import {
   runInAction,
 } from 'mobx';
 import ModulesService from '../service/modulesService';
-import { formatJson } from './../util/util';
+import { formatJson } from '../util/util';
 import DeployService from '../service/deployService';
 import { SERVICE_STATUS } from '../config/serviceConfig';
 import defaultValue from '../config/defalutValue';
 import { message } from 'antd';
-export default class AppState {
+
+export default class DeployState {
 
   originData = [];
   @observable data = [];
   @observable dataDetails = '';
   @observable loadState = true;
-  @observable addModalVisible = false;
-  @observable viewModalVisible = false;
+  @observable addVisible = false;
+  @observable detailsVisible = false;
   @observable addDeployModalVisible = false;
   @observable deployList = [];
   @observable ModuleId = 11;
@@ -25,25 +26,25 @@ export default class AppState {
     return defaultValue.modules.add;
   }
 
-  //create Module
-  @action addModule = async (p) => {
-    let r = await ModulesService.save(p);
+  //create
+  @action add = async (p) => {
+    let r = await DeployService.save(p);
     runInAction(() => {
       if (r.status === SERVICE_STATUS.ok) {
         message.info(r.message, 4);
-        this.toggleAddModule();
+        this.toggleAddVisible();
         this.getList();
-      }else{
+      } else {
         message.info(r.message);
       }
     });
   }
 
-  // delete Module
-  @action delModule = async (id) => {
-    let r = await ModulesService.del(id);
+  // delete 
+  @action del = async (srvcId,instId) => {
+    let r = await DeployService.del(srvcId,instId);
     runInAction(() => {
-      if (r.status == 204) {
+      if (r.status === SERVICE_STATUS.ok) {
         message.info('success', 3);
         this.getList();
       } else {
@@ -51,27 +52,35 @@ export default class AppState {
       }
     });
   }
-  // query Module List
+  // query List
   @action async getList() {
     this.loadState = true;
-    let _r = await ModulesService.getList();
+    let _r = await DeployService.getHealth();
     runInAction(() => {
-      this.data = _r.data;
-      this.originData = _r.data;
-      this.loadState = false;
+      if (_r.status === SERVICE_STATUS.ok) {
+        this.data = _r.data;
+        this.originData = _r.data;
+        this.loadState = false;
+      }else{
+        message.info(_r.message,4);
+      }
     });
   }
 
-  // query Module one
-  @action async getDetails(moduleId) {
+  // query one
+  @action async getDetails(service_id, instance_id) {
     this.loadState = true;
     this.dataDetails = '';
-    this.viewModalVisible = true;
-    let _r = await ModulesService.getOne(moduleId);
+    this.detailsVisible = true;
+    let _r = await DeployService.getOne(service_id, instance_id);
     runInAction(() => {
-      this.dataDetails = formatJson(JSON.stringify(_r));
-      this.originData = _r.data;
-      this.loadState = false;
+      if (_r.status === SERVICE_STATUS.ok) {
+        this.dataDetails = formatJson(JSON.stringify(_r.data));
+        this.loadState = false;
+      }else{
+        message.info(_r.message,4);
+      }
+      
     });
   }
 
@@ -91,26 +100,26 @@ export default class AppState {
       if (r.status === SERVICE_STATUS.ok) {
         message.info(r.message, 4);
         this.toggleAddDeployModal();
-      }else{
+      } else {
         message.info(r.message);
       }
     });
   }
 
- 
+
   @computed get deployDefaultValue() {
     return defaultValue.deploy.add(this.ModuleId);
-    
+
   }
-  @action search(value) {
-    this.data = this.originData.filter(item => item.id.indexOf(value) > -1);
+  @action search=(value)=> {
+    this.data = this.originData.filter(item => item.srvcId.indexOf(value) > -1);
   }
 
-  @action toggleAddModule = () => {
-    this.addModalVisible = !this.addModalVisible;
+  @action toggleAddVisible = () => {
+    this.addVisible = !this.addVisible;
   }
-  @action toggleViewModule = () => {
-    this.viewModalVisible = !this.viewModalVisible;
+  @action toggleDetailsVisible = () => {
+    this.detailsVisible = !this.detailsVisible;
 
   }
   @action toggleAddDeployModal = () => {
