@@ -16,8 +16,6 @@ instance.interceptors.request.use(function (config) {
     }
     config.headers['Content-Type'] = 'application/json';
     config.headers['okapiHost'] = okapiHost;
-    console.log(config.headers);
-
     return config;
 }, function (error) {
     // 对请求错误做些什么

@@ -7,26 +7,37 @@ class TenantsService {
             let _r = await axios.get('/_/proxy/tenants');
             switch (_r.status) {
                 case 200:   //success
-                    return {message:SERVICE_MESSAGE.success,status:SERVICE_STATUS.ok,data:_r.data};
+                    return { message: SERVICE_MESSAGE.success, status: SERVICE_STATUS.ok, data: _r.data };
                 case 400:   //Bad request
-                    return {message:_r.data,status:SERVICE_STATUS.error};
+                    return { message: _r.data, status: SERVICE_STATUS.error };
                 case 404:   //Validation errors
-                    return {message:_r.data,status:SERVICE_STATUS.error};
+                    return { message: _r.data, status: SERVICE_STATUS.error };
                 case 500:   //Internal server error
-                    return {message:_r.data,status:SERVICE_STATUS.error};
+                    return { message: _r.data, status: SERVICE_STATUS.error };
                 default:
-                    return {message:SERVICE_MESSAGE.unknown_err,status:SERVICE_STATUS.error,data:_r.data};
+                    return { message: SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error, data: _r.data };
             }
         } catch (error) {
-            return {message:SERVICE_MESSAGE.unknown_err,status:SERVICE_STATUS.error,data:error};
+            return { message: SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error, data: error };
         }
-       
+
     }
     static async save(params) {
         try {
-            let r= await axios.post('/_/proxy/tenants',params);
-            return r.statusText;
-            
+            let _r = await axios.post('/_/proxy/tenants', params);
+            switch (_r.status) {
+                case 201:   //success
+                    return { message: SERVICE_MESSAGE.success, status: SERVICE_STATUS.ok, data: _r.data };
+                case 400:   //Validation errors
+                    return { message: _r.data, status: SERVICE_STATUS.error };
+                case 403:   //Validation errors
+                    return { message: _r.data, status: SERVICE_STATUS.error,data: _r.data  };
+                case 500:   //Internal server error
+                    return { message: _r.data, status: SERVICE_STATUS.error };
+                default:
+                    return { message: SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error, data: _r.data };
+            }
+
         } catch (error) {
             return error.response.data;
         }
@@ -35,50 +46,53 @@ class TenantsService {
      * 删除模块
      * @param {String} moduleId  模块id
      */
-    static async del(moduleId){
+    static async del(moduleId) {
         try {
-           
-            let r= await axios.delete('/_/proxy/tenants/'+moduleId,{validateStatus:function(status){
-                return status >= 200 && status <600;
-              }});
-            return {status:r.status,message:r.data};
+
+            let _r = await axios.delete('/_/proxy/tenants/' + moduleId);
+            switch (_r.status) {
+                case 204:
+                    return { message: SERVICE_MESSAGE.success, status: SERVICE_STATUS.ok };
+                default:
+                    return { message: SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error, data: _r.data };
+            }
         } catch (error) {
             return error;
         }
     }
 
-    static async bindModule(params,tenantId){
+    static async bindModule(params, tenantId) {
         try {
-            let _r= await axios.post( '/_/proxy/tenants/'+tenantId+'/modules',params);
+            let _r = await axios.post('/_/proxy/tenants/' + tenantId + '/modules', params);
             switch (_r.status) {
                 case 201:   //success
-                    return {message:SERVICE_MESSAGE.success,status:SERVICE_STATUS.ok,data:_r.data};
-               
+                    return { message: SERVICE_MESSAGE.success, status: SERVICE_STATUS.ok, data: _r.data };
+
                 case 500:   //Internal server error
-                    return {message:_r.data,status:SERVICE_STATUS.error};
+                    return { message: _r.data, status: SERVICE_STATUS.error };
                 default:
-                   return {message:SERVICE_MESSAGE.unknown_err,status:SERVICE_STATUS.error};
+                    return { message: SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error };
             }
-            
+
         } catch (error) {
             return error.response.data;
         }
     }
-    static async unBindModule(tenant_id,module_id){
+    static async unBindModule(tenant_id, module_id) {
         try {
-            let _r= await axios.delete( '/_/proxy/tenants/'+tenant_id+'/modules/'+module_id);
+            let _r = await axios.delete('/_/proxy/tenants/' + tenant_id + '/modules/' + module_id);
             switch (_r.status) {
                 case 204:   //success
-                    return {message:SERVICE_MESSAGE.success,status:SERVICE_STATUS.ok,data:_r.data};
+                    return { message: SERVICE_MESSAGE.success, status: SERVICE_STATUS.ok, data: _r.data };
                 case 400:   //Bad request
-                    return {message:_r.data,status:SERVICE_STATUS.error};
+                    return { message: _r.data, status: SERVICE_STATUS.error };
                 case 500:   //Internal server error
-                    return {message:_r.data,status:SERVICE_STATUS.error};
+                    return { message: _r.data, status: SERVICE_STATUS.error };
                 default:
-                   return {message:SERVICE_MESSAGE.unknown_err,status:SERVICE_STATUS.error};
+                    return { message: SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error };
             }
-            
-            
+
+
         } catch (error) {
             return error;
         }
