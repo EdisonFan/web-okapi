@@ -7,7 +7,7 @@ class blUsersService {
         post: async (username, password, x_okapi_tenant) => {
 
             try {
-                let _r = await axios.post( `/bl-users/login`, `{
+                let _r = await axios.post( `/authn/login`, `{
                     "username":"${username}",
                     "password":"${password}"
                     }`

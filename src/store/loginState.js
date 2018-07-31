@@ -33,5 +33,8 @@ export default class Login {
         this.userName='';
         this.x_okapi_tenant='';
         this.x_okapi_token='';
+        sessionStorage.removeItem('x-okapi-tenant');
+        sessionStorage.removeItem('x-okapi-token');
+
      }
 }
