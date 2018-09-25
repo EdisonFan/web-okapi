@@ -47,9 +47,10 @@ class Login extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        this.props.form.validateFields((err, values) => {
+        this.props.form.validateFields(async (err, values) => {
             if (!err) {
-                if(this.props.AppStateStore.loginState.loginSystem(values)){
+                let _r= await this.props.AppStateStore.loginState.loginSystem(values);
+                if(_r){
                     this.props.history.push('/home');
                 }
             }

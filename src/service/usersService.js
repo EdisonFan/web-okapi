@@ -56,8 +56,26 @@ class UsersService {
      * @param {String} userId 
      */
     static async getOne(userId) {
-        let _mdata = await axios.get(`/users/${userId}`);
-        return _mdata.data;
+        return  axios.get(`/users/${userId}`)
+            .then(
+                (_r) => {
+                    switch (_r.status) {
+                        case 200:   //success
+                            return { message: SERVICE_MESSAGE.success, status: SERVICE_STATUS.ok, data: _r.data };
+                        case 400:
+                            return { message: _r.data, status: SERVICE_STATUS.error };
+                        case 403:
+                            return { message: _r.data, status: SERVICE_STATUS.error };
+                        case 500:   //Internal server error
+                            return { message: _r.data, status: SERVICE_STATUS.error };
+                        default:
+                            return { message: _r.data || SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error, data: _r.data };
+                    }
+                }
+            ).catch(error => {
+                return { message: error.message || SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error, data: error };
+            });
+        
         // `
         // {
         //     "username" : "admin",
@@ -121,9 +139,14 @@ class UsersService {
      */
     static async del(userId) {
         try {
+            let _r = await axios.delete(`/users/${userId}`);
+            switch (_r.status) {
+                case 204:
+                    return { message: SERVICE_MESSAGE.success, status: SERVICE_STATUS.ok };
+                default:
+                    return { message: SERVICE_MESSAGE.unknown_err, status: SERVICE_STATUS.error, data: _r.data };
+            }
 
-            let r = await axios.delete(`/users/${userId}`);
-            return { status: r.status, message: r.data };
         } catch (error) {
             return error;
         }

@@ -7,9 +7,15 @@ import { SERVICE_STATUS } from '../config/serviceConfig';
 import {message} from 'antd';
 export default class Login {
 
-@observable userName = '';
-    @observable x_okapi_tenant = '';
-    @observable x_okapi_token = '';
+    constructor(){
+        this.userName = sessionStorage.getItem('userName')||'';
+        this.x_okapi_tenant = sessionStorage.getItem('x-okapi-tenant')||'';
+        this.x_okapi_token = sessionStorage.getItem('x-okapi-token')||'';
+    }
+
+    @observable userName ;
+    @observable x_okapi_tenant ;
+    @observable x_okapi_token ;
 
 
     @action loginSystem=async (values)=>{
@@ -19,10 +25,10 @@ export default class Login {
            this.userName=_r.data.userName;
            this.x_okapi_tenant=_r.data.tenant;
            this.x_okapi_token=_r.data.token;
+           sessionStorage.setItem("userName",_r.data.userName);
            sessionStorage.setItem("x-okapi-tenant",_r.data.tenant);
            sessionStorage.setItem("x-okapi-token",_r.data.token);
            return true;
-           //TODO 根据返回的权限动态显示主菜单
         }else{
             message.error(_r.message);
             return false;

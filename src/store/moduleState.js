@@ -102,7 +102,7 @@ export default class ModuleState {
     return defaultValue.deploy.add(this.ModuleId);
     
   }
-  @action search(value) {
+  @action search=(value)=>{
     this.data = this.originData.filter(item => item.id.indexOf(value) > -1);
   }
 

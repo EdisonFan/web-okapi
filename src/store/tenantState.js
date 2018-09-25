@@ -8,6 +8,7 @@ import { message } from 'antd';
 import TenantsService from '../service/tenantsService';
 import { SERVICE_STATUS } from '../config/serviceConfig';
 import ModulesService from '../service/modulesService';
+import { Tree } from '../../node_modules/antd';
 
 export default class TenantState {
 
@@ -75,10 +76,10 @@ export default class TenantState {
             });
           });
           this.modulesData=_allModules.data;
-          this.loadState=false;
         }else{
-          message.info(_allModules.message);
+            message.info(_allModules.message);
         }
+        this.loadState=false;
       }
    
     @action search=(value)=>{
@@ -94,7 +95,6 @@ export default class TenantState {
     }
     @action toggleBindModulesVisible = () => {
         this.bindModulesVisible = !this.bindModulesVisible;
-
     }
 
    @action bindModule = async (tenantId, moduleId) => {
@@ -106,15 +106,18 @@ export default class TenantState {
           this.getModulesData(tenantId);
         } else {
           message.info(_r.message);
+          this.loadState=false;
         }
         return false;
       }
      @action unBindModule = async (tenantId, moduleId) => {
+        this.loadState=true;
         let _r = await TenantsService.unBindModule(tenantId, moduleId);
         if (_r.status == SERVICE_STATUS.ok) {
           this.getModulesData(tenantId);
         } else {
           message.info(_r.message);
+          this.loadState=false;
         }
       }
 }
