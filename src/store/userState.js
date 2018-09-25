@@ -97,8 +97,9 @@ export default class UserState {
     let _r = await UsersService.getList(30, query);
     runInAction(() => {
       if (_r.status === SERVICE_STATUS.ok) {
-        this.data = _r.data;
-        this.originData = _r.data;
+        
+        this.data =_r.data.filter(item=>item);
+        this.originData =_r.data.filter(item=>item);
       }else{
         message.info(_r.message,4);
       }
