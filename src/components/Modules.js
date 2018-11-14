@@ -17,6 +17,8 @@ class Modules extends Component {
         <span>
           <a onClick={() => this.props.AppStateStore.ModuleState.getDepolyHealth(record.id)}>部署</a>
           <Divider type="vertical" />
+          <a onClick={() => this.props.AppStateStore.ModuleState.modifyModule(record.id)}>修改</a>
+          <Divider type="vertical" />
           <a onClick={() => this.props.AppStateStore.ModuleState.delModule(record.id)}>删除</a>
         </span>
       ),
@@ -26,9 +28,10 @@ class Modules extends Component {
     const {
       data, loadState, addModalVisible,
       toggleAddModule, viewModalVisible,
+      toggleModModule,modModalVisible,
       toggleViewModule, dataDetails,
       addDeployModalVisible, toggleAddDeployModal,search,
-      deployList, ModuleId, addDeployModule, addModule,
+      deployList, ModuleId, addDeployModule, addModule,modModule,
       deployDefaultValue, addDefaultValut
     } = this.props.AppStateStore.ModuleState;
     return (
@@ -57,6 +60,16 @@ class Modules extends Component {
           <SimpleContent
             defaultValue={addDefaultValut}
             clearValue={!addModalVisible} onClick={(p) => addModule(p)} />
+        </Modal>
+        <Modal
+          title="修改模块"
+          visible={modModalVisible}
+          onCancel={toggleModModule}
+          footer={false}
+        >
+          <SimpleContent
+            defaultValue={dataDetails}
+            clearValue={!modModalVisible} onClick={(p) => modModule(p)} />
         </Modal>
         <Modal
           title={`部署服务`}

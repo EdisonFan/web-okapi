@@ -5,7 +5,6 @@ import {
   runInAction,
 } from 'mobx';
 import ModulesService from '../service/modulesService';
-import { formatJson } from '../util/util';
 import DeployService from '../service/deployService';
 import { SERVICE_STATUS } from '../config/serviceConfig';
 import defaultValue from '../config/defalutValue';
@@ -19,6 +18,7 @@ export default class ModuleState {
   @observable addModalVisible = false;
   @observable viewModalVisible = false;
   @observable addDeployModalVisible = false;
+  @observable modModalVisible=false;
   @observable deployList = [];
   @observable ModuleId = 11;
   @computed get addDefaultValut() {
@@ -51,6 +51,20 @@ export default class ModuleState {
       }
     });
   }
+
+    //modify a Module
+    @action modModule = async (p) => {
+      let r = await ModulesService.modify(this.ModuleId,p);
+      runInAction(() => {
+        if (r.status === SERVICE_STATUS.ok) {
+          message.info(r.message, 4);
+          this.toggleModModule();
+          this.getList();
+        }else{
+          message.info(r.message);
+        }
+      });
+    }
   // query Module List
   @action async getList() {
     this.loadState = true;
@@ -69,12 +83,24 @@ export default class ModuleState {
     this.viewModalVisible = true;
     let _r = await ModulesService.getOne(moduleId);
     runInAction(() => {
-      this.dataDetails = formatJson(JSON.stringify(_r));
+      this.dataDetails = JSON.stringify(_r,null,2);
       this.originData = _r.data;
       this.loadState = false;
     });
   }
 
+  @action async modifyModule(moduleId) {
+    this.loadState = true;
+    this.dataDetails = '';
+    this.modModalVisible = true;
+    this.ModuleId =moduleId;
+    let _r = await ModulesService.getOne(moduleId);
+    runInAction(() => {
+      this.dataDetails = JSON.stringify(_r,null,2);
+      this.originData = _r.data;
+      this.loadState = false;
+    });
+  }
   @action async getDepolyHealth(ModuleId) {
     this.ModuleId = ModuleId;
     this.deployList = [];
@@ -115,6 +141,9 @@ export default class ModuleState {
   }
   @action toggleAddDeployModal = () => {
     this.addDeployModalVisible = !this.addDeployModalVisible;
+  }
 
+  @action toggleModModule= () => {
+    this.modModalVisible = !this.modModalVisible;
   }
 }

@@ -47,6 +47,19 @@ class ModulesService {
             return error;
         }
     }
+    static  async modify(moduleId,params) {
+        try {
+            let _r= await axios.put('/_/proxy/modules/'+moduleId,params);
+            switch (_r.status) {
+                case 200:   //success
+                    return {message:SERVICE_MESSAGE.success,status:SERVICE_STATUS.ok,data:_r.data};
+                default:
+                    return {message:SERVICE_MESSAGE.unknown_err,status:SERVICE_STATUS.error,data:_r.data};
+            }
+        } catch (error) {
+            return error;
+        }
+    }
     /**
      * 删除模块
      * @param {String} moduleId  模块id
