@@ -22,6 +22,9 @@ html,body,#root{
     font-family: -webkit-body;
     color: #fff
 }
+.logo a{
+    color: #fff
+}
 .header {
     height: 64px;
     padding: 0 12px 0 0;

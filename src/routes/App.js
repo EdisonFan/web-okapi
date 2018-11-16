@@ -53,7 +53,7 @@ const Layouts = () => (
    
       <Layout >
         <Sider breakpoint="lg" collapsedWidth="0">
-          <div className="logo" >OKAPI_MANAGE </div>
+          <div className="logo"><a href='/#/setHost'>OKAPI_MANAGE</a></div>
           <Header />
         </Sider>
         <Layout>
