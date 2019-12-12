@@ -22,13 +22,17 @@ export default class UserState {
   @observable detailsVisible = false;
   @observable permissionsVisible = false;
   @observable deployList = [];
-  @observable addGroupVisible=false;
-  @observable submitBtnStatus=false;
-  @observable userGroups=[{ 'id': '+add', 'group': 'add' }];
+  @observable addGroupVisible = false;
+  @observable submitBtnStatus = false;
+  @observable userGroups = [{ 'id': '+add', 'group': 'add' }];
 
-  
-  @action add = async (values) => {
+
+  @action add = async (values, tenantId = null) => {
     //TODO 根据存在的userId，判断新增还是修改
+
+    if (tenantId) {
+      sessionStorage.setItem('x-okapi-tenant-temp', tenantId);
+    }
     const userId = uuidv1();
     let params = `
     {
@@ -38,12 +42,11 @@ export default class UserState {
       "type": "patron",
       "personal":{
           "lastName":"${values.username}"
-      },
-      "patronGroup":"${values.patronGroup}"
+      }
    }
     `;
-    this.submitBtnStatus=false;
-    let _r = await UsersService.save(params);
+    this.submitBtnStatus = false;
+    let _r = await UsersService.save(params, tenantId);
     if (_r.status === SERVICE_STATUS.ok) {
       params = `
       {
@@ -55,12 +58,18 @@ export default class UserState {
       let _j = await loginService.authn_credentials.post(params);
       if (_j.status === SERVICE_STATUS.ok) {
         params = `
-        {
-          "userId":"${userId}",
-          "permissions":[],
-          "id":"${uuidv1()}"
-        }      
+          { "userId":"${userId}", "permissions":[], "id":"${uuidv1()}" }      
         `;
+        if (tenantId) {
+          //预制权限
+          params = `
+          {
+            "userId":"${userId}",
+            "permissions":["users.all", "perms.all", "login.all"], 
+            "id":"${uuidv1()}"
+          }      
+          `;
+        }
         let _p = await permiService.perms_user.post(params);
         if (_p.status === SERVICE_STATUS.ok) {
           message.info('创建成功');
@@ -68,10 +77,11 @@ export default class UserState {
           this.getList();
         }
       }
-    }else{
+    } else {
       message.info(_r.message);
     }
-    this.submitBtnStatus=true;
+    this.submitBtnStatus = true;
+    sessionStorage.removeItem('x-okapi-tenant-temp');
 
   }
   // delete 
@@ -88,7 +98,7 @@ export default class UserState {
   }
   // query List
   @action async getList(value) {
-    this.data=[];
+    this.data = [];
     let query = undefined;
     if (value) {
       let userName = value;
@@ -97,11 +107,11 @@ export default class UserState {
     let _r = await UsersService.getList(30, query);
     runInAction(() => {
       if (_r.status === SERVICE_STATUS.ok) {
-        
-        this.data =_r.data.filter(item=>item);
-        this.originData =_r.data.filter(item=>item);
-      }else{
-        message.info(_r.message,4);
+
+        this.data = _r.data.filter(item => item);
+        this.originData = _r.data.filter(item => item);
+      } else {
+        message.info(_r.message, 4);
       }
       this.loadState = false;
     });
@@ -117,20 +127,20 @@ export default class UserState {
       this.loadState = false;
       if (_r.status === SERVICE_STATUS.ok) {
         this.dataDetails = formatJson(JSON.stringify(_r.data));
-      }else{
-        message.info(_r.message,4);
+      } else {
+        message.info(_r.message, 4);
       }
-      
+
     });
   }
 
-  @action search=(value)=> {
+  @action search = (value) => {
     this.data = this.originData.filter(item => item.srvcId.indexOf(value) > -1);
   }
 
   @action toggleAddVisible = () => {
     this.addVisible = !this.addVisible;
-    if(this.userGroups.length===1 && this.addVisible) this.getGroup();
+    // if(this.userGroups.length===1 && this.addVisible) this.getGroup();
   }
   @action toggleDetailsVisible = () => {
     this.detailsVisible = !this.detailsVisible;
@@ -139,31 +149,31 @@ export default class UserState {
   @action togglePermissionsVisible = () => {
     this.permissionsVisible = !this.permissionsVisible;
   }
-  @action showPermissions=(userId)=>{
-    this.userId=userId;
+  @action showPermissions = (userId) => {
+    this.userId = userId;
     this.togglePermissionsVisible();
   }
-  @action toggleAddGroupVisible=()=>{
-    this.addGroupVisible=!this.addGroupVisible;
+  @action toggleAddGroupVisible = () => {
+    this.addGroupVisible = !this.addGroupVisible;
   }
 
   @action getGroup = async () => {
     let _r = await groupsService.groups.get();
     if (_r.status === SERVICE_STATUS.ok) {
-      this.userGroups=[{ 'id': '+add', 'group': 'add' }].concat(_r.data.usergroups);
+      this.userGroups = [{ 'id': '+add', 'group': 'add' }].concat(_r.data.usergroups);
     } else {
       message.error(`userGroups:${_r.message}`);
     }
   }
-  @action addGroup = async(values)=>{
-    let _r=await groupsService.groups.post(values.group);
-    if(_r.status===SERVICE_STATUS.ok){
+  @action addGroup = async (values) => {
+    let _r = await groupsService.groups.post(values.group);
+    if (_r.status === SERVICE_STATUS.ok) {
       this.toggleAddGroupVisible();
       this.getGroup();
       message.info(_r.message);
-    }else{
+    } else {
       message.info(_r.message);
     }
   }
-  
+
 }

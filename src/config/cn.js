@@ -12,6 +12,7 @@ const Users = {
         password:'密码',
         group:'用户组',
         Status:'状态',
+        tenant:'租客id',
     }
 };
 const cn={Users}; 

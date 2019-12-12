@@ -21,7 +21,7 @@ const groupsService = {
         },
         //Create a group (need token & tenant)
         post: async (group) => {
-            return axios.post(`/groups`, { group })
+            return axios.post(`/groups`, { group,desc:group })
                 .then(_r => {
                     switch (_r.status) {
                         case 201:   //success

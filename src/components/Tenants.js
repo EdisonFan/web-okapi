@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Table, Divider, Button, Modal,  Switch, Icon, Popconfirm, Input } from 'antd';
 import SimpleContent from './SimpleContent.jsx';
 import { observer,inject } from 'mobx-react';
-
+import WrappedEditUser from './EditUser';
 @inject('AppStateStore')
 @observer
 class Tenants extends Component {
@@ -20,6 +20,14 @@ class Tenants extends Component {
           </Popconfirm>
           <Divider type="vertical" />
           <a href="javascript:;" onClick={this.props.AppStateStore.TenantState.getModulesData.bind(this, record.id)}>绑定模块</a>
+          {
+            sessionStorage.getItem('x-okapi-tenant')?'':
+          
+          <a href="javascript:;" onClick={this.props.AppStateStore.TenantState.clickAddUser.bind(this,record.id)}>
+          <Divider type="vertical" />
+          添加管理员</a>
+          }
+
         </span>
       ),
     }];
@@ -53,7 +61,7 @@ class Tenants extends Component {
   
   render() {
     const Search = Input.Search;
-    const {data,add,loadState,search,addVisible,toggleAddVisible,bindModulesVisible,modulesData,toggleBindModulesVisible} =this.props.AppStateStore.TenantState;
+    const {data,add,loadState,search,addVisible,toggleAddVisible,addUserVisible,toggleAddUserVisible,bindModulesVisible,modulesData,toggleBindModulesVisible,tenantId} =this.props.AppStateStore.TenantState;
     return (
       <div>
         <div style={{ marginBottom: 10, textAlign: 'right' }}>
@@ -86,7 +94,18 @@ class Tenants extends Component {
         >
           <Table scroll={{ y: 500 }} pagination={false} loading={loadState} columns={this.modulesColumns} dataSource={modulesData} />
         </Modal>
+        <Modal
+          title="添加管理员"
+          visible={addUserVisible}
+          onCancel={toggleAddUserVisible}
+          footer={false}
+        >{addUserVisible?
+          <WrappedEditUser saveSuccessFn={() => { toggleAddUserVisible(); }} tenantId={tenantId} />
+        :''
+        }
+        </Modal>
         <Table rowKey={(record)=>record.id} pagination={false} loading={loadState} columns={this.columns} dataSource={data} />
+        
       </div>
     );
   }

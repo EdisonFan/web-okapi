@@ -8,17 +8,17 @@ import { message } from 'antd';
 import TenantsService from '../service/tenantsService';
 import { SERVICE_STATUS } from '../config/serviceConfig';
 import ModulesService from '../service/modulesService';
-import { Tree } from '../../node_modules/antd';
 
 export default class TenantState {
 
     originData = [];
-    @observable loadState=false;
+    @observable loadState = false;
     @observable data = [];
     @observable addVisible = false;
-    @observable bindModulesVisible=false;
-    @observable modulesData=[];
-    @observable tenantId='';
+    @observable bindModulesVisible = false;
+    @observable modulesData = [];
+    @observable tenantId = '';
+    @observable addUserVisible = false;
     //create
     @action add = async (p) => {
         let r = await TenantsService.save(p);
@@ -28,7 +28,7 @@ export default class TenantState {
                 this.getList();
                 this.addVisible = false;
             } else {
-                message.info(r.message,4);
+                message.info(r.message, 4);
             }
         });
     }
@@ -55,34 +55,34 @@ export default class TenantState {
                 this.data = _r.data;
                 this.originData = _r.data;
                 this.loadState = false;
-            }else{
+            } else {
                 message.info(`status:${_r.status},message:${_r.message}`, 4);
             }
         });
     }
     @action getModulesData = async (tenantId) => {
-        this.loadState= true;
-        this.bindModulesVisible=true;
-        this.tenantId=tenantId;
+        this.loadState = true;
+        this.bindModulesVisible = true;
+        this.tenantId = tenantId;
         let _allModules = await ModulesService.getList();
         let _tenModules = await ModulesService.getListByTanId(tenantId);
         if (_allModules.status === SERVICE_STATUS.ok) {
-          _allModules.data.forEach(function (element, index, array) {
-            element['bind'] = false;
-            _tenModules.forEach((t_element, t_index, a) => {
-              if (element['id'] == t_element['id']) {
-                element['bind'] = true;
-              }
+            _allModules.data.forEach(function (element, index, array) {
+                element['bind'] = false;
+                _tenModules.forEach((t_element, t_index, a) => {
+                    if (element['id'] == t_element['id']) {
+                        element['bind'] = true;
+                    }
+                });
             });
-          });
-          this.modulesData=_allModules.data;
-        }else{
+            this.modulesData = _allModules.data;
+        } else {
             message.info(_allModules.message);
         }
-        this.loadState=false;
-      }
-   
-    @action search=(value)=>{
+        this.loadState = false;
+    }
+
+    @action search = (value) => {
         this.data = this.originData.filter(item => item.id.indexOf(value) > -1);
     }
 
@@ -97,27 +97,38 @@ export default class TenantState {
         this.bindModulesVisible = !this.bindModulesVisible;
     }
 
-   @action bindModule = async (tenantId, moduleId) => {
+    @action bindModule = async (tenantId, moduleId) => {
         let params = `{"id":"${moduleId}"}`;
-        this.loadState=true;
+        this.loadState = true;
         let _r = await TenantsService.bindModule(params, tenantId);
         if (_r.status == SERVICE_STATUS.ok) {
-          message.info(_r.message);
-          this.getModulesData(tenantId);
+            message.info(_r.message);
+            this.getModulesData(tenantId);
         } else {
-          message.info(_r.message);
-          this.loadState=false;
+            message.info(_r.message);
+            this.loadState = false;
         }
         return false;
-      }
-     @action unBindModule = async (tenantId, moduleId) => {
-        this.loadState=true;
+    }
+    @action unBindModule = async (tenantId, moduleId) => {
+        this.loadState = true;
         let _r = await TenantsService.unBindModule(tenantId, moduleId);
         if (_r.status == SERVICE_STATUS.ok) {
-          this.getModulesData(tenantId);
+            this.getModulesData(tenantId);
         } else {
-          message.info(_r.message);
-          this.loadState=false;
+            message.info(_r.message);
+            this.loadState = false;
         }
-      }
+    }
+
+    @action toggleAddUserVisible = async () => {
+        this.addUserVisible = !this.addUserVisible;
+        
+    }
+    @action clickAddUser=(tenantId)=>{
+        this.tenantId=tenantId;
+        //sessionStorage.setItem("x-okapi-tenant",tenantId);
+        
+        this.toggleAddUserVisible();
+    }
 }

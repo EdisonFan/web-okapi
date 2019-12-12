@@ -23,6 +23,7 @@ class App extends React.Component {
         }
     }
     componentWillMount(){
+        document.title=sessionStorage.getItem('host')||'okapi-manage';
         if (this.pathname == '/') {
             if (sessionStorage.getItem('host')) {
                 this.props.history.replace('/home');
@@ -49,6 +50,7 @@ class App extends React.Component {
 }
 
 const Layouts = () => (
+  
   <div style={{height:'100%'}}>
    
       <Layout >

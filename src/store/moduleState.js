@@ -61,7 +61,7 @@ export default class ModuleState {
           this.toggleModModule();
           this.getList();
         }else{
-          message.info(r.message);
+          message.info(r.message,7);
         }
       });
     }

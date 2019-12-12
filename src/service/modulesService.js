@@ -53,6 +53,8 @@ class ModulesService {
             switch (_r.status) {
                 case 200:   //success
                     return {message:SERVICE_MESSAGE.success,status:SERVICE_STATUS.ok,data:_r.data};
+                case 400:   //success
+                    return {message:_r.data,status:SERVICE_STATUS.error};
                 default:
                     return {message:SERVICE_MESSAGE.unknown_err,status:SERVICE_STATUS.error,data:_r.data};
             }

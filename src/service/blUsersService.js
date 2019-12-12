@@ -25,13 +25,13 @@ class blUsersService {
                 switch (status) {
                     case 201:           //登陆成功
                         if (_r.headers['x-okapi-token']) {
-                            let data={token:_r.headers['x-okapi-token'],tenant:_r.headers['x-okapi-tenant'],userName:username};
+                            let data={token:_r.headers['x-okapi-token'],tenant:x_okapi_tenant,userName:username};
                             return { message: SERVICE_MESSAGE.success, status: SERVICE_STATUS.ok,data};
                         }
                         return { message: SERVICE_MESSAGE.login_no_token, status: SERVICE_STATUS.error };
                     case 400:           //租客错误或密码错误
                         if(typeof _r.data === "string"){
-                            return { message: SERVICE_MESSAGE.login_err_tenant, status: SERVICE_STATUS.error };
+                            return { message: _r.data, status: SERVICE_STATUS.error };
                         }else{
                             return { message: SERVICE_MESSAGE.login_err_password, status: SERVICE_STATUS.error};
                         }

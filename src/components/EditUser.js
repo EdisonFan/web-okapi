@@ -1,12 +1,8 @@
+import { Button, Form, Input, Switch } from 'antd';
+import { inject, observer } from 'mobx-react';
 import React from 'react';
-import {  Button, Modal, message, Switch, Input } from 'antd';
-import {Form, Select} from 'antd';
-import groupsService from '../service/groupsService';
-import { SERVICE_STATUS } from '../config/serviceConfig';
-import { observer,inject } from 'mobx-react';
 import lang from './../config/cn';
 const FormItem = Form.Item;
-const Option = Select.Option;
 
 @inject('AppStateStore')
 @observer
@@ -18,8 +14,8 @@ class EditUser extends React.Component {
   
 
   render() {
-    const $this = this;
     const { getFieldDecorator } = this.props.form;
+    const tenantId =this.props.tenantId;
     const formItemLayout = {
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -53,8 +49,21 @@ class EditUser extends React.Component {
               <Input placeholder="Please input your password" />
             )}
           </FormItem>
-
-          <FormItem {...formItemLayout} label={lang.Users.add.group}>
+          {
+            sessionStorage.getItem('x-okapi-tenant')?'':
+          
+          <FormItem {...formItemLayout} label={lang.Users.add.tenant}>
+            {getFieldDecorator('tenantId', {
+              initialValue:tenantId,
+              rules: [{
+                required: false,
+                message: 'Please input your tenantId',
+              }],
+            })(
+              <Input placeholder="Please input tenantId" />
+            )}
+          </FormItem>}
+          {/* <FormItem {...formItemLayout} label={lang.Users.add.group}>
             {getFieldDecorator('patronGroup', {
               rules: [
                 { required: true, message: 'Please select your group!' },
@@ -79,7 +88,7 @@ class EditUser extends React.Component {
                 ))}
               </Select>
             )}
-          </FormItem>
+          </FormItem> */}
           <FormItem {...formItemLayout} label={lang.Users.add.Status} >
             {getFieldDecorator('active', { valuePropName: 'checked' })(
               <Switch />
@@ -91,6 +100,8 @@ class EditUser extends React.Component {
             <Button type="primary" htmlType="submit" loading={!this.state.submitBtnStatus}>保存</Button>
           </FormItem>
         </Form>
+        {/* 
+        新版中不需要添加用户组了
         <Modal
           title="添加用户组"
           visible={addGroupVisible}
@@ -104,7 +115,7 @@ class EditUser extends React.Component {
              toggleAddGroupVisible();
               getGroup();
           }} />
-        </Modal>
+        </Modal> */}
       </div>
     );
   }
@@ -113,7 +124,7 @@ class EditUser extends React.Component {
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
-        this.props.AppStateStore.UserState.add(values);
+        this.props.AppStateStore.UserState.add(values,values.tenantId);
       }
     });
   }
